@@ -2592,9 +2592,17 @@ button.sys-btn,
             <div class="menu-section-title">Ежедневные активности</div>
             <div class="system-menu-grid">
                 <button class="system-menu-card is-ready" onclick="openDailyTasks()"><b>📜 Дела дня</b><small>Задания, прогресс и награды</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Квест дня')"><b>🧭 Квест дня</b><small>Сюжетное ежедневное поручение</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Колесо')"><b>🎡 Колесо</b><small>Ежедневные вращения</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Почта')"><b>✉️ Почта</b><small>Системные письма и подарки</small></button>
+                
+              <!-- КВЕСТ ДНЯ -->
+<button class="system-menu-card is-ready" onclick="switchTab('dailyQuest')">
+    <b>🧭 Квест дня</b>
+    <small>Сюжетное ежедневное поручение</small>
+</button>
+              <button class="system-menu-card" onclick="openSystemModule('Колесо')"><b>🎡 Колесо</b><small>Ежедневные вращения</small></button>
+                <button class="system-menu-card is-ready" onclick="openMailbox()">
+    <b>📬 Почта <span id="mailUnreadBadge"></span></b>
+    <small>Системные письма, события и подарки</small>
+                </button>
             </div>
             <div class="menu-section-title">Мир и приключения</div>
             <div class="system-menu-grid">
@@ -2656,6 +2664,36 @@ button.sys-btn,
     </div>
 
     <!-- КОНЕЦ HTML-БЛОКА: системное меню всех игровых разделов -->
+  <!-- ===== ЭКРАН ПОЧТЫ ===== -->
+<div id="mailboxView" class="extra-screen" style="display:none;">
+    <div class="extra-screen-inner">
+
+        <div class="extra-screen-header">
+            <h2>📬 Почта</h2>
+            <button class="extra-back" onclick="openSystemMenu()">
+                ← Меню
+            </button>
+        </div>
+
+        <div class="daily-summary">
+            Здесь хранятся системные письма, подарки, события и компенсации.
+        </div>
+
+        <!-- КНОПКА ПОЛУЧЕНИЯ ВСЕХ НАГРАД -->
+<div style="text-align:center; margin:15px 0;">
+    <button onclick="claimAllMailRewards()">
+        🎁 Получить всё
+    </button>
+</div>
+
+<!-- СПИСОК ПИСЕМ -->
+<div id="mailboxContent"></div>
+
+    </div>
+</div>
+  
+<!-- ===== КОНЕЦ ЭКРАНА ПОЧТЫ ===== -->
+  
     <!-- НАЧАЛО HTML-БЛОКА: экран ежедневных заданий -->
     <!-- ===== РАБОЧИЙ РАЗДЕЛ ДЕЛА ДНЯ ===== -->
     <div id="dailyTasksView" class="extra-screen">
@@ -2667,7 +2705,20 @@ button.sys-btn,
             <div id="dailyTasksContent"></div>
         </div>
     </div>
+    <!-- НАЧАЛО HTML-БЛОКА: экран квеста дня -->
+    <!-- ===== НОВЫЙ РАБОЧИЙ РАЗДЕЛ КВЕСТ ДНЯ ===== -->
+    <div id="dailyQuestView" class="extra-screen">
+        <div class="extra-screen-inner">
+            <div class="extra-screen-header">
+                <h2>🧭 Квест дня</h2>
+                <button class="extra-back" onclick="openSystemMenu()">← Меню</button>
+            </div>
 
+            <div id="dailyQuestContent"></div>
+        </div>
+    </div>
+    <!-- КОНЕЦ HTML-БЛОКА: экран квеста дня -->
+  
     <!-- КОНЕЦ HTML-БЛОКОВ ИНТЕРФЕЙСА: далее начинается логика игры на JavaScript -->
     <script>
     <!-- КОНЕЦ HTML-БЛОКА: экран ежедневных заданий -->
@@ -2696,8 +2747,9 @@ button.sys-btn,
             lastBonusTime: 0,
             currentEpoch: 1,
             coins: 1000,
-            dailyTasks: { date: "", progress: {}, claimed: {}, bonusClaimed: false }
-        };
+            dailyTasks: { date: "", progress: {}, claimed: {}, bonusClaimed: false },
+mailbox: [] 
+    }
 
 // ================================================
 // 7 ПЕРСОНАЖЕЙ — ПОРЯДОК НА ОБЩЕЙ ФОТОГРАФИИ
@@ -2828,6 +2880,256 @@ const heroes = [
             { id: 'shop', title: 'Подготовка героя', description: 'Купи любой предмет в магазине.', target: 1, reward: { coins: 50, exp: 40 }, rewardText: '+50 монет · +40 опыта' }
         ];
 
+// ===== НАЧАЛО СИСТЕМЫ: КВЕСТ ДНЯ =====
+
+
+ // ===== НАЧАЛО: СПИСОК СЮЖЕТНЫХ КВЕСТОВ =====
+const dailyQuestPool = [
+    {
+        id: 'awakening',
+        title: 'Испытание пробуждённого духа',
+        description: 'Проведи медитацию 3 раза.',
+        taskId: 'meditate',
+        target: 3,
+        reward: { coins: 100, exp: 100, shards: 10 }
+    },
+    {
+        id: 'gate_trial',
+        title: 'Покоритель Врат',
+        description: 'Успешно пройди любые Врата 1 раз.',
+        taskId: 'gate',
+        target: 1,
+        reward: { coins: 120, exp: 100, shards: 10 }
+    },
+    {
+        id: 'merchant',
+        title: 'Подготовка героя',
+        description: 'Купи любой предмет в магазине.',
+        taskId: 'shop',
+        target: 1,
+        reward: { coins: 100, exp: 80, shards: 5 }
+    },
+    {
+        id: 'arena',
+        title: 'Испытание арены',
+        description: 'Одержи 1 победу на арене.',
+        taskId: 'arenaWin',
+        target: 1,
+        reward: { coins: 150, exp: 120, shards: 10 }
+    },
+    {
+        id: 'equipment',
+        title: 'Сила снаряжения',
+        description: 'Надень любой предмет экипировки.',
+        taskId: 'equip',
+        target: 1,
+        reward: { coins: 100, exp: 100, shards: 8 }
+    },
+    {
+        id: 'cultivation',
+        title: 'Новый рубеж',
+        description: 'Повышай уровень персонажа 1 раз.',
+        taskId: 'levelUp',
+        target: 1,
+        reward: { coins: 150, exp: 150, shards: 10 }
+    },
+    {
+        id: 'rebirth',
+        title: 'Путь перерождения',
+        description: 'Совершить перерождение 1 раз.',
+        taskId: 'rebirth',
+        target: 1,
+        reward: { coins: 200, exp: 150, shards: 15 }
+    }
+];
+// ===== КОНЕЦ: СПИСОК СЮЖЕТНЫХ КВЕСТОВ =====
+
+// ===== НАЧАЛО: ПОЛУЧЕНИЕ ТЕКУЩЕГО КВЕСТА =====
+function getCurrentDailyQuest() {
+
+    if (!player.dailyQuest) {
+        return dailyQuestPool[0];
+    }
+
+    return dailyQuestPool.find(
+        quest => quest.id === player.dailyQuest.questId
+    ) || dailyQuestPool[0];
+}
+// ===== КОНЕЦ: ПОЛУЧЕНИЕ ТЕКУЩЕГО КВЕСТА =====
+      
+function ensureDailyQuest() {
+    const today = getLocalDayKey();
+
+    if (!Array.isArray(dailyQuestPool) || dailyQuestPool.length === 0) {
+        return;
+    }
+
+    if (!player.dailyQuest || typeof player.dailyQuest !== 'object') {
+        player.dailyQuest = {
+            date: today,
+            questId: dailyQuestPool[0].id,
+            progress: 0,
+            claimed: false
+        };
+    }
+
+    // Новый квест при наступлении нового дня
+    if (player.dailyQuest.date !== today) {
+        const dayNumber = Math.floor(
+            new Date(today + 'T00:00:00').getTime() / 86400000
+        );
+
+        const questIndex = Math.abs(dayNumber) % dailyQuestPool.length;
+        const selectedQuest = dailyQuestPool[questIndex];
+
+        player.dailyQuest = {
+            date: today,
+            questId: selectedQuest.id,
+            progress: 0,
+            claimed: false
+        };
+
+        saveGame();
+    }
+
+    // Защита от некорректного прогресса
+    player.dailyQuest.progress = Math.max(
+        0,
+        Math.min(
+            getCurrentDailyQuest().target,
+            Number(player.dailyQuest.progress) || 0
+        )
+    );
+}
+
+
+
+// // ===== НАЧАЛО: ПРОГРЕСС СЮЖЕТНОГО КВЕСТА =====
+function addDailyQuestProgress(taskId, amount = 1) {
+
+    ensureDailyQuest();
+
+    const quest = getCurrentDailyQuest();
+
+    if (taskId !== quest.taskId) return;
+    if (player.dailyQuest.claimed) return;
+
+    const addAmount = Math.max(0, Number(amount) || 0);
+
+    player.dailyQuest.progress = Math.min(
+        quest.target,
+        player.dailyQuest.progress + addAmount
+    );
+
+    saveGame();
+
+    const view = document.getElementById('dailyQuestView');
+
+    if (view && view.style.display !== 'none') {
+        renderDailyQuest();
+    }
+}
+// ===== КОНЕЦ: ПРОГРЕСС СЮЖЕТНОГО КВЕСТА =====
+      
+// ===== НАЧАЛО: ОТОБРАЖЕНИЕ СЮЖЕТНОГО КВЕСТА =====
+function renderDailyQuest() {
+
+    ensureDailyQuest();
+
+    const content = document.getElementById('dailyQuestContent');
+    if (!content) return;
+
+    const quest = getCurrentDailyQuest();
+
+    const progress = player.dailyQuest.progress;
+    const claimed = player.dailyQuest.claimed;
+
+    const percent = Math.min(100, (progress / quest.target) * 100);
+    const completed = progress >= quest.target;
+
+    const rewardText = [
+        quest.reward.coins + ' монет',
+        quest.reward.exp + ' опыта',
+        quest.reward.shards + ' осколков'
+    ].join(' · ');
+
+    content.innerHTML = `
+        <div class="daily-quest-card">
+
+            <div style="font-size:42px;text-align:center;margin:15px;">🧭</div>
+
+            <h3 style="text-align:center;color:#e9d5ff;">
+                ${quest.title}
+            </h3>
+
+            <p style="text-align:center;">
+                ${quest.description}
+            </p>
+
+            <div style="margin:20px 0;">
+                <div style="display:flex;justify-content:space-between;">
+                    <span>Прогресс</span>
+                    <b>${progress} / ${quest.target}</b>
+                </div>
+
+                <div style="height:12px;background:#211b35;border-radius:10px;overflow:hidden;margin-top:8px;">
+                    <div style="height:100%;width:${percent}%;background:linear-gradient(90deg,#8b5cf6,#38bdf8);transition:width .3s;"></div>
+                </div>
+            </div>
+
+            <div style="text-align:center;margin:20px 0;color:#facc15;">
+                🎁 Награда: ${rewardText}
+            </div>
+
+            <button
+                class="system-menu-card"
+                style="width:100%;"
+                onclick="claimDailyQuestReward()"
+                ${!completed || claimed ? 'disabled' : ''}
+            >
+                ${claimed ? '✅ Награда получена' : completed ? '🎁 Получить награду' : '🔒 Выполни задание'}
+            </button>
+        </div>
+    `;
+}
+// ===== КОНЕЦ: ОТОБРАЖЕНИЕ СЮЖЕТНОГО КВЕСТА =====
+      
+// ===== КОНЕЦ: ОТОБРАЖЕНИЕ СЮЖЕТНОГО КВЕСТА =====
+
+
+
+// ===== НАЧАЛО: ПОЛУЧЕНИЕ НАГРАДЫ ЗА КВЕСТ =====
+function claimDailyQuestReward() {
+
+    ensureDailyQuest();
+
+    const quest = getCurrentDailyQuest();
+
+    if (player.dailyQuest.claimed) {
+        showToast('Награда за этот квест уже получена.');
+        return;
+    }
+
+    if (player.dailyQuest.progress < quest.target) {
+        showToast('Сначала выполни квест дня.');
+        return;
+    }
+
+    player.dailyQuest.claimed = true;
+
+    player.coins = (Number(player.coins) || 0) + (quest.reward.coins || 0);
+    player.exp = (Number(player.exp) || 0) + (quest.reward.exp || 0);
+    player.shards = (Number(player.shards) || 0) + (quest.reward.shards || 0);
+
+    checkLevelUp();
+    saveGame();
+    updateUI();
+    renderDailyQuest();
+
+    showToast('🎁 Награда получена: ' + quest.title);
+}
+// ===== КОНЕЦ: ПОЛУЧЕНИЕ НАГРАДЫ ЗА КВЕСТ =====
+      
         // НАЧАЛО ФУНКЦИИ: getLocalDayKey — получает текущую дату для ежедневного обновления заданий
 
         function getLocalDayKey() {
@@ -2961,8 +3263,286 @@ const heroes = [
         }
         // КОНЕЦ ФУНКЦИИ: openSystemMenu
 
-        // НАЧАЛО ФУНКЦИИ: openDailyTasks — открывает экран «Дела дня»
+// ===== ОТКРЫТИЕ ПОЧТЫ =====
+function openMailbox() {
+    switchTab('mailbox');
+    renderMailbox();
+}
+// ===== КОНЕЦ ОТКРЫТИЯ ПОЧТЫ =====
+    
+      // ===== ИНДИКАТОР НЕПРОЧИТАННЫХ ПИСЕМ =====
+function updateMailBadge() {
+    if (!Array.isArray(player.mailbox)) {
+        player.mailbox = [];
+    }
 
+    const badge = document.getElementById('mailUnreadBadge');
+    if (!badge) return;
+
+    const unread = player.mailbox.filter(mail => !mail.read).length;
+
+    badge.innerText = unread > 0 ? unread : '';
+    badge.style.display = unread > 0 ? 'inline-flex' : 'none';
+}
+// ===== КОНЕЦ ИНДИКАТОРА ПОЧТЫ =====
+
+      // ===== ОТОБРАЖЕНИЕ ПИСЕМ =====
+function renderMailbox() {
+    if (!Array.isArray(player.mailbox)) {
+        player.mailbox = [];
+    }
+
+    const content = document.getElementById('mailboxContent');
+    if (!content) return;
+
+    // При открытии почты отмечаем письма прочитанными
+    let changed = false;
+
+    player.mailbox.forEach(mail => {
+        if (!mail.read) {
+            mail.read = true;
+            changed = true;
+        }
+    });
+
+    if (changed) {
+        saveGame();
+    }
+  
+    updateMailBadge();
+if (player.mailbox.length === 0) {
+        content.innerHTML = `
+            <div class="daily-summary" style="text-align:center; padding:25px;">
+                📭 Почта пуста.
+                <br><br>
+                Здесь появятся системные письма, подарки и награды.
+            </div>
+        `;
+        return;
+    }
+
+    content.innerHTML = player.mailbox.map((mail, index) => {
+        const rewards = mail.rewards || {};
+
+        let rewardText = [];
+
+        if (Number(rewards.coins) > 0)
+            rewardText.push('💰 ' + Number(rewards.coins));
+
+        if (Number(rewards.exp) > 0)
+            rewardText.push('⭐ ' + Number(rewards.exp) + ' опыта');
+
+        if (Number(rewards.shards) > 0)
+            rewardText.push('💎 ' + Number(rewards.shards));
+
+        const safeTitle = escapeMailText(mail.title || 'Системное письмо');
+        const safeMessage = escapeMailText(mail.message || '');
+
+        return `
+            <div class="daily-summary" style="margin-bottom:12px; padding:15px;">
+                <h3>✉️ ${safeTitle}</h3>
+
+                <p>${safeMessage}</p>
+
+                ${rewardText.length
+                    ? `<p>🎁 Награды: ${rewardText.join(' • ')}</p>`
+                    : ''
+                }
+
+                ${
+    mail.claimed
+    ? '<p>✅ Награда получена</p>'
+    : rewardText.length
+        ? `<button onclick="claimMailReward(${index})">🎁 Получить</button>`
+        : '<p>📨 Системное сообщение</p>'
+}
+
+${
+    !rewardText.length || mail.claimed
+    ? `<button onclick="deleteMail(${index})">🗑 Удалить</button>`
+    : ''
+}
+            </div>
+        `;
+    }).join('');
+}
+// ===== КОНЕЦ ОТОБРАЖЕНИЯ ПИСЕМ =====
+
+// ===== ЗАЩИТА ТЕКСТА ПИСЕМ =====
+function escapeMailText(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[char]);
+}
+// ===== КОНЕЦ ЗАЩИТЫ ТЕКСТА =====
+
+      // ===== ПОЛУЧЕНИЕ НАГРАДЫ ИЗ ПИСЬМА =====
+function claimMailReward(index) {
+    if (!Array.isArray(player.mailbox)) return;
+
+    const mail = player.mailbox[index];
+
+    if (!mail || mail.claimed) {
+        return;
+    }
+
+    const rewards = mail.rewards || {};
+
+    const coins = Math.max(0, Number(rewards.coins) || 0);
+    const exp = Math.max(0, Number(rewards.exp) || 0);
+    const shards = Math.max(0, Number(rewards.shards) || 0);
+
+    // Не позволяем получить пустую награду
+    if (coins + exp + shards <= 0) {
+        return;
+    }
+
+    // Отмечаем письмо полученным
+    mail.claimed = true;
+
+    // Начисляем ресурсы
+    player.coins = (Number(player.coins) || 0) + coins;
+    player.exp = (Number(player.exp) || 0) + exp;
+    player.shards = (Number(player.shards) || 0) + shards;
+
+    // Проверяем повышение уровня
+    if (exp > 0 && typeof checkLevelUp === 'function') {
+        checkLevelUp();
+    }
+
+    saveGame();
+    updateUI();
+    renderMailbox();
+
+    log('Награда из письма получена!');
+}
+// ===== КОНЕЦ ПОЛУЧЕНИЯ НАГРАДЫ =====
+
+      // ===== ПОЛУЧИТЬ ВСЕ НАГРАДЫ ИЗ ПОЧТЫ =====
+function claimAllMailRewards() {
+    if (!Array.isArray(player.mailbox)) return;
+
+    let totalCoins = 0;
+    let totalExp = 0;
+    let totalShards = 0;
+    let claimedCount = 0;
+
+    player.mailbox.forEach(mail => {
+        if (!mail || mail.claimed) return;
+
+        const rewards = mail.rewards || {};
+
+        const coins = Math.max(0, Number(rewards.coins) || 0);
+        const exp = Math.max(0, Number(rewards.exp) || 0);
+        const shards = Math.max(0, Number(rewards.shards) || 0);
+
+        if (coins + exp + shards <= 0) return;
+
+        totalCoins += coins;
+        totalExp += exp;
+        totalShards += shards;
+
+        mail.claimed = true;
+        claimedCount++;
+    });
+
+    if (claimedCount === 0) {
+        log('Нет доступных наград для получения.');
+        return;
+    }
+
+    player.coins = (Number(player.coins) || 0) + totalCoins;
+    player.exp = (Number(player.exp) || 0) + totalExp;
+    player.shards = (Number(player.shards) || 0) + totalShards;
+
+    if (totalExp > 0 && typeof checkLevelUp === 'function') {
+        checkLevelUp();
+    }
+
+    saveGame();
+    updateUI();
+    renderMailbox();
+
+    log('Все награды из почты получены!');
+}
+// ===== КОНЕЦ ПОЛУЧЕНИЯ ВСЕХ НАГРАД =====
+      // ===== УДАЛЕНИЕ ПИСЬМА =====
+function deleteMail(index) {
+    if (!Array.isArray(player.mailbox)) return;
+
+    const mail = player.mailbox[index];
+
+    if (!mail) return;
+
+    // Нельзя удалить письмо с неполученной наградой
+    const rewards = mail.rewards || {};
+    const hasReward =
+        (Number(rewards.coins) || 0) > 0 ||
+        (Number(rewards.exp) || 0) > 0 ||
+        (Number(rewards.shards) || 0) > 0;
+
+    if (hasReward && !mail.claimed) {
+        log('Сначала заберите награду из этого письма!');
+        return;
+    }
+
+    player.mailbox.splice(index, 1);
+
+    saveGame();
+    updateMailBadge();
+    renderMailbox();
+
+    log('Письмо удалено.');
+}
+// ===== КОНЕЦ УДАЛЕНИЯ ПИСЬМА =====
+
+      // ===== ДОБАВЛЕНИЕ НОВОГО ПИСЬМА =====
+function addMail(data = {}) {
+    if (!Array.isArray(player.mailbox)) {
+        player.mailbox = [];
+    }
+
+    const mail = {
+        id: 'mail_' + Date.now() + '_' + Math.floor(Math.random() * 100000),
+        type: data.type || 'system',
+        title: String(data.title || 'Системное письмо'),
+        message: String(data.message || ''),
+        rewards: {
+            coins: Math.max(0, Number(data.rewards?.coins) || 0),
+            exp: Math.max(0, Number(data.rewards?.exp) || 0),
+            shards: Math.max(0, Number(data.rewards?.shards) || 0)
+        },
+        createdAt: Date.now(),
+        read: false,
+        claimed: false
+    };
+
+    player.mailbox.unshift(mail);
+
+    saveGame();
+    updateMailBadge();
+
+    // Если почта сейчас открыта — обновляем список
+    const mailboxView = document.getElementById('mailboxView');
+
+    if (mailboxView && mailboxView.style.display !== 'none') {
+        renderMailbox();
+    }
+
+    return mail.id;
+}
+      
+// ===== КОНЕЦ ДОБАВЛЕНИЯ ПИСЬМА =====
+
+
+      
+
+      
+        // НАЧАЛО ФУНКЦИИ: openDailyTasks — открывает экран «Дела дня»
         function openDailyTasks() {
             switchTab('daily');
             ensureDailyTasks();
@@ -2992,6 +3572,13 @@ const heroes = [
                     let parsed = JSON.parse(saved);
                     player = Object.assign({}, player, parsed);
                     if (!player.inventory) player.inventory = [];
+                 
+                  // ===== ИНИЦИАЛИЗАЦИЯ ПОЧТЫ =====
+if (!Array.isArray(player.mailbox)) {
+    player.mailbox = [];
+}
+// ===== КОНЕЦ ИНИЦИАЛИЗАЦИИ ПОЧТЫ =====
+                  
                     if (!player.equipped) player.equipped = { bone: null, weapon: null };
                     if (!player.equippedGear) player.equippedGear = {};
                     if (player.coins === undefined) player.coins = 1000;
@@ -3006,7 +3593,11 @@ const heroes = [
 
             // Инициализация ежедневных заданий без изменения старого прогресса
             ensureDailyTasks();
-
+          // Инициализация сюжетного квеста дня
+ensureDailyQuest();
+// ===== ОБНОВЛЕНИЕ ИНДИКАТОРА ПОЧТЫ ПРИ ЗАГРУЗКЕ =====
+updateMailBadge();
+          
             // ===== ВОССТАНОВЛЕНИЕ ФОТОГРАФИИ ЭКИПИРОВКИ =====
 if (player.heroKey) {
     updateEquipmentCharacterBackground();
@@ -3403,6 +3994,7 @@ function buyShopItem(itemName, price) {
 
     // Учитываем покупку в ежедневном задании
     addDailyProgress('shop');
+  addDailyQuestProgress('shop', 1);
 
     // Добавляем предмет с отдельной фотографией
     player.inventory.push({
@@ -3470,6 +4062,7 @@ function buyShopItem(itemName, price) {
 
             if (effectivePower >= g.reqPower) {
                 addDailyProgress('gate');
+              addDailyQuestProgress('gate', 1);
                 let expBonus = (player.heroKey === 'ning_rongrong') ? 1.3 : 1.0;
                 let gainedExp = Math.floor(g.exp * mult * expBonus);
                 let shardsBonus = (player.heroKey === 'ma_hongjun') ? 1.4 : 1.0;
@@ -3520,6 +4113,7 @@ function updateArenaUI() {
 
             if (player.power >= enemyPower) {
                 player.arenaWins++;
+              addDailyQuestProgress('arenaWin', 1);
                 let rewardShards = 25 * mult;
                 const rewardCoins = 60 * mult;
                 player.shards += rewardShards;
@@ -3596,15 +4190,25 @@ function switchTab(tabName) {
     const mainView = document.querySelector('.container');
     const menuView = document.getElementById('systemMenuView');
     const dailyView = document.getElementById('dailyTasksView');
+  // Экран почты
+const mailboxView = document.getElementById('mailboxView');
     const cultivationView = document.getElementById('cultivationView');
-
+const dailyQuestView = document.getElementById('dailyQuestView');
+  
     if (invView) invView.style.display = tabName === 'inventory' ? 'flex' : 'none';
     if (shopView) shopView.style.display = tabName === 'shop' ? 'flex' : 'none';
     if (mainView) mainView.style.display = tabName === 'main' ? 'flex' : 'none';
     if (menuView) menuView.style.display = tabName === 'menu' ? 'block' : 'none';
     if (dailyView) dailyView.style.display = tabName === 'daily' ? 'block' : 'none';
+  // Показываем почту только при выборе соответствующей вкладки
+if (mailboxView) mailboxView.style.display = tabName === 'mailbox' ? 'block' : 'none';
     if (cultivationView) cultivationView.style.display = tabName === 'cultivation' ? 'flex' : 'none';
-
+if (dailyQuestView) dailyQuestView.style.display = tabName === 'dailyQuest' ? 'flex' : 'none';
+  if (tabName === 'dailyQuest') {
+    ensureDailyQuest();
+    renderDailyQuest();
+  }
+  
     if (tabName === 'inventory') renderInventory();
     if (tabName === 'shop') updateUI();
     if (tabName === 'daily') renderDailyTasks();
@@ -3988,6 +4592,7 @@ document.getElementById('detailSellBtn').addEventListener('click', function () {
             const mult = (Number(player.rebirthCount) || 0) + 1;
             if (old) { player.power -= (Number(old.power) || 0) * mult; player.inventory.push(old); }
             player.equippedGear[key] = item;
+          addDailyQuestProgress('equip', 1);
             player.power += (Number(item.power) || 0) * mult;
             player.inventory.splice(index, 1);
             log('🛡️ Надет предмет: ' + item.name);
@@ -4060,6 +4665,7 @@ document.getElementById('detailSellBtn').addEventListener('click', function () {
                 player.inventory.push(player.equipped.bone);
             }
             player.equipped.bone = item;
+          addDailyQuestProgress('equip', 1);
             player.power += (Number(item.power) || 0) * mult;
             player.inventory.splice(index, 1);
             log('🦴 Экипирован артефакт: ' + (item.name || 'Артефакт'));
@@ -4086,6 +4692,7 @@ document.getElementById('detailSellBtn').addEventListener('click', function () {
         function rebirth() {
             if (player.level >= 99) {
                 player.rebirthCount++;
+              addDailyQuestProgress('rebirth', 1);
                 player.level = 1;
                 player.exp = 0;
                 player.maxExp = 100;
@@ -4403,6 +5010,7 @@ if (avatar) {
             player.coins = (Number(player.coins) || 0) + (5 * mult);
             player.energy = Math.min(player.maxEnergy, player.energy + energyBonus);
             addDailyProgress('meditate');
+          addDailyQuestProgress('meditate', 1);
             log(`🧘 Медитация: энергия восстановлена, +${5 * mult} монет.`);
             checkLevelUp();
             saveGame();
@@ -4438,6 +5046,7 @@ if (avatar) {
             while (player.exp >= player.maxExp && player.level < 99) {
                 player.exp -= player.maxExp;
                 player.level += 1;
+              addDailyQuestProgress('levelUp', 1);
                 player.power += (35 * (player.rebirthCount + 1));
                 player.maxEnergy += 10;
                 player.energy = player.maxEnergy;
@@ -4448,13 +5057,12 @@ if (avatar) {
         // КОНЕЦ ФУНКЦИИ: checkLevelUp
 
         
-        // Магазин закрывается кнопкой «Назад», как отдельная вкладка.
-
-        window.onload = function() {
-            loadGame();
-            updateUI();
-        };
-
+        // ===== ЗАГРУЗКА ИГРЫ =====
+window.onload = function() {
+    loadGame();
+    updateUI();
+};
+// ===== КОНЕЦ ЗАГРУЗКИ ИГРЫ =====
       
       
         /* КОНЕЦ JS-БЛОКА: игровые данные и механика игры */
@@ -4594,8 +5202,41 @@ async function loadCloudGame(session) {
             Object.keys(cloudData).length > 0
         ) {
             // Облако содержит сохранение — загружаем его
-            player = Object.assign({}, player, cloudData);
+            // Сохраняем письма из локального сохранения
+const localMailbox = Array.isArray(player.mailbox)
+    ? [...player.mailbox]
+    : [];
 
+// Загружаем облачное сохранение
+player = Object.assign({}, player, cloudData);
+
+// Объединяем локальную и облачную почту
+const cloudMailbox = Array.isArray(player.mailbox)
+    ? player.mailbox
+    : [];
+
+const mergedMailbox = new Map();
+
+[...cloudMailbox, ...localMailbox].forEach(mail => {
+    if (!mail || !mail.id) return;
+
+    const existing = mergedMailbox.get(mail.id);
+
+    if (!existing) {
+        mergedMailbox.set(mail.id, { ...mail });
+    } else {
+        mergedMailbox.set(mail.id, {
+            ...existing,
+            ...mail,
+            read: Boolean(existing.read || mail.read),
+            claimed: Boolean(existing.claimed || mail.claimed)
+        });
+    }
+});
+
+player.mailbox = Array.from(mergedMailbox.values())
+    .sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0));
+          
             if (!Array.isArray(player.inventory)) player.inventory = [];
             if (!player.equipped) player.equipped = { bone: null, weapon: null };
             if (!player.equippedGear) player.equippedGear = {};
@@ -4616,6 +5257,9 @@ async function loadCloudGame(session) {
             );
 
             console.log('Игровой прогресс загружен из облака.');
+          // Обновляем индикатор почты после загрузки из облака
+updateMailBadge();
+          
         } else {
             // Облачного прогресса ещё нет — переносим локальный
             await writeCloudSave(userId);
@@ -4894,7 +5538,6 @@ async function logoutAccount() {
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
-        alert('Не удалось выйти: ' + error.message);
         return;
     }
 
