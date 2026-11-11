@@ -2886,18 +2886,40 @@ if (player.heroKey) {
     showHeroSelection();
 }
         }
+      
+            // ===== СИГНАЛ: ИГРА ЗАГРУЗИЛА ЛОКАЛЬНОЕ СОХРАНЕНИЕ =====
+            window.rebornGameLoaded = true;
+            window.dispatchEvent(new Event('reborn-game-loaded'));
+            // ===== КОНЕЦ СИГНАЛА ЗАГРУЗКИ =====
+
         // КОНЕЦ ФУНКЦИИ: loadGame
 
-        // НАЧАЛО ФУНКЦИИ: saveGame — сохраняет игровой прогресс в памяти телефона
 
-        function saveGame() {
-            try {
-                localStorage.setItem('reborn_douluo_v4', JSON.stringify(player));
-            } catch (e) {
-                console.error("Ошибка сохранения:", e);
-            }
+// ================================================
+// НАЧАЛО ФУНКЦИИ: saveGame
+// Локальное и облачное сохранение игрового прогресса
+// ================================================
+function saveGame() {
+    try {
+        // Сначала всегда сохраняем прогресс на телефоне
+        localStorage.setItem(
+            'reborn_douluo_v4',
+            JSON.stringify(player)
+        );
+
+        // Затем ставим облачное сохранение в очередь
+        if (typeof queueCloudSave === 'function') {
+            queueCloudSave();
         }
-        // КОНЕЦ ФУНКЦИИ: saveGame
+
+    } catch (e) {
+        console.error("Ошибка сохранения:", e);
+    }
+}
+// ================================================
+// КОНЕЦ ФУНКЦИИ: saveGame
+// ================================================
+
 
         
 // ===== УПРАВЛЕНИЕ СБРОСОМ ПЕРСОНАЖА =====
@@ -4280,6 +4302,184 @@ if (avatar) {
 
         console.log('Supabase подключён');
 
+// ================================================
+// НАЧАЛО БЛОКА: ОБЛАЧНЫЕ СОХРАНЕНИЯ SUPABASE
+// ================================================
+
+let cloudSaveUserId = null;
+let cloudSaveReady = false;
+let cloudSaveTimer = null;
+let cloudLoadPromise = null;
+
+// Подготовка данных для отправки в Supabase
+function makeCloudSaveRow(userId) {
+    const snapshot = JSON.parse(JSON.stringify(player));
+
+    return {
+        player_id: userId,
+        hero_name: player.heroName || 'Путник',
+        level: Number(player.level) || 1,
+        experience: Number(player.exp) || 0,
+        power: Number(player.power) || 15,
+        energy: Number(player.energy) || 100,
+        coins: Number(player.coins) || 0,
+        shards: Number(player.shards) || 0,
+        rebirth_count: Number(player.rebirthCount) || 0,
+        save_data: snapshot,
+        updated_at: new Date().toISOString()
+    };
+}
+
+// Отправка полного игрового прогресса в облако
+async function writeCloudSave(userId) {
+    if (!userId) return;
+
+    const row = makeCloudSaveRow(userId);
+
+    const { error } = await supabaseClient
+        .from('characters')
+        .upsert(row, { onConflict: 'player_id' });
+
+    if (error) {
+        console.error('Ошибка облачного сохранения:', error);
+        throw error;
+    }
+
+    console.log('Облачное сохранение успешно обновлено.');
+}
+
+// Очередь сохранения с небольшой задержкой
+function queueCloudSave() {
+    if (!cloudSaveReady || !cloudSaveUserId) return;
+
+    clearTimeout(cloudSaveTimer);
+
+    const userId = cloudSaveUserId;
+
+    cloudSaveTimer = setTimeout(async () => {
+        if (!cloudSaveReady || cloudSaveUserId !== userId) return;
+
+        try {
+            await writeCloudSave(userId);
+        } catch (error) {
+            console.error('Не удалось сохранить прогресс в облако:', error);
+        }
+    }, 1200);
+}
+
+// Загрузка прогресса из Supabase
+async function loadCloudGame(session) {
+    const userId = session?.user?.id;
+    if (!userId) return false;
+
+    if (cloudSaveReady && cloudSaveUserId === userId) {
+        return true;
+    }
+
+    if (cloudSaveUserId === userId && cloudLoadPromise) {
+        return cloudLoadPromise;
+    }
+
+    clearTimeout(cloudSaveTimer);
+    cloudSaveReady = false;
+    cloudSaveUserId = userId;
+
+    cloudLoadPromise = (async () => {
+        // Ждём, пока игра загрузит локальное сохранение
+        if (!window.rebornGameLoaded) {
+            await new Promise(resolve => {
+                const onReady = () => {
+                    window.removeEventListener('reborn-game-loaded', onReady);
+                    resolve();
+                };
+
+                window.addEventListener('reborn-game-loaded', onReady, { once: true });
+
+                if (window.rebornGameLoaded) {
+                    window.removeEventListener('reborn-game-loaded', onReady);
+                    resolve();
+                }
+            });
+        }
+
+        if (cloudSaveUserId !== userId) return false;
+
+        const { data, error } = await supabaseClient
+            .from('characters')
+            .select('save_data')
+            .eq('player_id', userId)
+            .maybeSingle();
+
+        if (error) throw error;
+
+        const cloudData = data?.save_data;
+
+        if (
+            cloudData &&
+            typeof cloudData === 'object' &&
+            Object.keys(cloudData).length > 0
+        ) {
+            // Облако содержит сохранение — загружаем его
+            player = Object.assign({}, player, cloudData);
+
+            if (!Array.isArray(player.inventory)) player.inventory = [];
+            if (!player.equipped) player.equipped = { bone: null, weapon: null };
+            if (!player.equippedGear) player.equippedGear = {};
+            if (!player.dailyTasks) {
+                player.dailyTasks = {
+                    date: '',
+                    progress: {},
+                    claimed: {},
+                    bonusClaimed: false
+                };
+            }
+
+            player.maxExp = Math.max(100, Number(player.maxExp) || 100);
+            player.maxEnergy = Math.max(1, Number(player.maxEnergy) || 100);
+            player.energy = Math.min(
+                Math.max(0, Number(player.energy) || 0),
+                player.maxEnergy
+            );
+
+            console.log('Игровой прогресс загружен из облака.');
+        } else {
+            // Облачного прогресса ещё нет — переносим локальный
+            await writeCloudSave(userId);
+            console.log('Первое сохранение перенесено в облако.');
+        }
+
+        if (cloudSaveUserId !== userId) return false;
+
+        cloudSaveReady = true;
+
+        // Обновляем локальную копию и интерфейс
+        localStorage.setItem('reborn_douluo_v4', JSON.stringify(player));
+
+        if (player.heroKey) {
+            updateEquipmentCharacterBackground();
+        }
+
+        ensureDailyTasks();
+        updateUI();
+
+        return true;
+    })();
+
+    try {
+        return await cloudLoadPromise;
+    } catch (error) {
+        console.error('Ошибка загрузки облачного прогресса:', error);
+        cloudSaveReady = false;
+        return false;
+    } finally {
+        cloudLoadPromise = null;
+    }
+}
+
+// ================================================
+// КОНЕЦ БЛОКА: ОБЛАЧНЫЕ СОХРАНЕНИЯ SUPABASE
+// ================================================
+
 
 // ===== РЕГИСТРАЦИЯ И ВХОД =====
 
@@ -4446,8 +4646,11 @@ async function startOnlinePresence(session) {
 }
 // КОНЕЦ БЛОКА: Supabase Realtime — подсчёт уникальных игроков онлайн
 
-// НАЧАЛО ФУНКЦИИ: updateAuthScreen — показывает или скрывает экран авторизации
 
+// ================================================
+// НАЧАЛО ФУНКЦИИ: updateAuthScreen
+// Авторизация, облачная загрузка и онлайн
+// ================================================
 function updateAuthScreen(session) {
     const screen = document.getElementById('authScreen');
 
@@ -4455,14 +4658,42 @@ function updateAuthScreen(session) {
         screen.style.display = session ? 'none' : 'flex';
     }
 
-    // Запускаем настоящий онлайн-счётчик только для вошедшего аккаунта.
+    if (session && session.user) {
+        // Загружаем облачный прогресс после авторизации
+        setTimeout(async () => {
+            try {
+                const loaded = await loadCloudGame(session);
+
+                if (!loaded) {
+                    showAuthMessage(
+                        'Не удалось загрузить облачное сохранение. Проверь интернет.',
+                        '#f87171'
+                    );
+                }
+            } catch (error) {
+                console.error('Ошибка облачной загрузки:', error);
+            }
+        }, 0);
+    } else {
+        // Отключаем облачную запись после выхода
+        clearTimeout(cloudSaveTimer);
+        cloudSaveReady = false;
+        cloudSaveUserId = null;
+        cloudLoadPromise = null;
+    }
+
+    // Сохраняем существующий счётчик онлайна
     startOnlinePresence(session).catch(error => {
         console.warn('Ошибка счётчика онлайна:', error);
+
         const counter = document.getElementById('onlineCounter');
         if (counter) counter.classList.add('is-error');
     });
 }
+// ================================================
 // КОНЕЦ ФУНКЦИИ: updateAuthScreen
+// ================================================
+
 
 // Проверка существующего входа
 // НАЧАЛО ФУНКЦИИ: checkAuthSession — проверяет, выполнен ли вход ранее
