@@ -2091,7 +2091,117 @@ button.sys-btn,
     </div>
 
     <!-- КОНЕЦ HTML-БЛОКА: база Академии и улучшения -->
-    <!-- НАЧАЛО HTML-БЛОКА: инвентарь, экипировка и рюкзак -->
+   <!-- ================================================ -->
+<!-- НАЧАЛО ЭКРАНА: КУЛЬТИВАЦИЯ -->
+<!-- ================================================ -->
+
+<div id="cultivationView" style="
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(10,5,15,0.35), rgba(10,5,15,0.45)), url('images/Fon.png') center / cover no-repeat;
+    z-index: 1001;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    padding: 20px 15px;
+    box-sizing: border-box;
+">
+
+    <div style="
+        width: 100%;
+        max-width: 430px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(168,85,247,0.5);
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+    ">
+        <h2 style="color:#c084fc;margin:0;font-size:21px;">
+            🧘 КУЛЬТИВАЦИЯ
+        </h2>
+
+        <button class="sys-btn" onclick="switchTab('menu')">
+            ✕ Назад
+        </button>
+    </div>
+
+    <div style="
+        width:100%;
+        max-width:430px;
+        padding:20px;
+        box-sizing:border-box;
+        background:rgba(15,12,30,0.88);
+        border:1px solid rgba(168,85,247,0.55);
+        border-radius:16px;
+        color:#fff;
+    ">
+
+        <h3 style="color:#facc15;text-align:center;">
+            ✨ Духовное развитие
+        </h3>
+
+        <div style="margin:15px 0;">
+            <div>Уровень персонажа: <b id="cultivationLevel">1</b></div>
+            <div>Опыт: <b id="cultivationExp">0 / 100</b></div>
+            <div>Боевая сила: <b id="cultivationPower">15</b></div>
+            <div>Энергия: <b id="cultivationEnergy">100 / 100</b></div>
+        </div>
+
+        <div style="
+            width:100%;
+            height:13px;
+            background:#29243d;
+            border-radius:20px;
+            overflow:hidden;
+            margin:15px 0;
+        ">
+            <div id="cultivationExpBar" style="
+                width:0%;
+                height:100%;
+                background:linear-gradient(90deg,#7c3aed,#38bdf8);
+            "></div>
+        </div>
+
+                <div style="
+            padding:14px;
+            text-align:center;
+            background:rgba(124,58,237,0.15);
+            border-radius:12px;
+            color:#c4b5fd;
+        ">
+            Продолжай развиваться, чтобы достичь новых высот!
+        </div>
+
+        <!-- КНОПКА МЕДИТАЦИИ -->
+        <button onclick="meditate()" style="
+            width:100%;
+            margin-top:18px;
+            padding:15px;
+            border:1px solid rgba(192,132,252,0.8);
+            border-radius:12px;
+            background:linear-gradient(135deg,#6d28d9,#2563eb);
+            color:#fff;
+            font-size:17px;
+            font-weight:bold;
+            box-shadow:0 0 15px rgba(124,58,237,0.35);
+        ">
+            🧘 Начать медитацию
+        </button>
+
+    </div>
+
+</div>
+  
+
+<!-- ================================================ -->
+<!-- КОНЕЦ ЭКРАНА: КУЛЬТИВАЦИЯ -->
+<!-- ================================================ -->
+  
+  <!-- НАЧАЛО HTML-БЛОКА: инвентарь, экипировка и рюкзак -->
     <!-- 🎒 ПОЛНОЭКРАННЫЙ ИНВЕНТАРЬ -->
     <div id="inventoryView" style="
         display: none; 
@@ -2496,14 +2606,32 @@ button.sys-btn,
                 <button class="system-menu-card" onclick="openSystemModule('Охотник')"><b>🎯 Охотник</b><small>Поручения охотника</small></button>
             </div>
             <div class="menu-section-title">Персонаж</div>
-            <div class="system-menu-grid">
-                <button class="system-menu-card" onclick="openSystemModule('Навыки')"><b>✨ Навыки</b><small>Умения и развитие способностей</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Классы')"><b>🛡️ Классы</b><small>Боевые специализации</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Персонажи')"><b>🧑 Персонажи</b><small>Выбор боевого духа</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Манекен')"><b>🥊 Манекен</b><small>Проверка силы персонажа</small></button>
-            </div>
-            <div class="menu-section-title">Сообщество и экономика</div>
-            <div class="system-menu-grid">
+            <!-- ================================= -->
+<!-- НАЧАЛО: РАЗДЕЛ ПЕРСОНАЖА -->
+<!-- ================================= -->
+<div class="system-menu-grid">
+
+    <!-- Культивация -->
+    <button class="system-menu-card is-ready" onclick="switchTab('cultivation')">
+        <b>🧘 Культивация</b>
+        <small>Развитие духовной силы и уровня</small>
+    </button>
+
+    <button class="system-menu-card" onclick="openSystemModule('Навыки')"><b>✨ Навыки</b><small>Умения и развитие способностей</small></button>
+
+    <button class="system-menu-card" onclick="openSystemModule('Классы')"><b>🛡️ Классы</b><small>Боевые специализации</small></button>
+
+    <button class="system-menu-card" onclick="openSystemModule('Персонажи')"><b>🧑 Персонажи</b><small>Выбор боевого духа</small></button>
+
+    <button class="system-menu-card" onclick="openSystemModule('Манекен')"><b>🥊 Манекен</b><small>Проверка силы персонажа</small></button>
+
+</div>
+<!-- ================================= -->
+<!-- КОНЕЦ: РАЗДЕЛ ПЕРСОНАЖА -->
+<!-- ================================= -->
+
+<div class="menu-section-title">Сообщество и экономика</div> 
+          <div class="system-menu-grid">
                 <button class="system-menu-card is-ready" onclick="openSystemModule('Гильдия')"><b>🏛️ Гильдия</b><small>Текущая база Академии</small></button>
                 <button class="system-menu-card" onclick="openSystemModule('Ассоциация')"><b>🏢 Ассоциация</b><small>Организация охотников</small></button>
                 <button class="system-menu-card" onclick="openSystemModule('Работа')"><b>⚒️ Работа</b><small>Заработок монет</small></button>
@@ -3456,27 +3584,39 @@ function updateArenaUI() {
         }
         // КОНЕЦ ФУНКЦИИ: evolveHero
 
-        // НАЧАЛО ФУНКЦИИ: switchTab — переключает главные вкладки и экраны игры
+       
 
-        function switchTab(tabName) {
-            const invView = document.getElementById('inventoryView');
-            const shopView = document.getElementById('shop-modal');
-            const mainView = document.querySelector('.container');
-            const menuView = document.getElementById('systemMenuView');
-            const dailyView = document.getElementById('dailyTasksView');
+// ================================================
+// НАЧАЛО ФУНКЦИИ: switchTab
+// Переключение главных вкладок и экранов игры
+// ================================================
+function switchTab(tabName) {
+    const invView = document.getElementById('inventoryView');
+    const shopView = document.getElementById('shop-modal');
+    const mainView = document.querySelector('.container');
+    const menuView = document.getElementById('systemMenuView');
+    const dailyView = document.getElementById('dailyTasksView');
+    const cultivationView = document.getElementById('cultivationView');
 
-            if (invView) invView.style.display = tabName === 'inventory' ? 'flex' : 'none';
-            if (shopView) shopView.style.display = tabName === 'shop' ? 'flex' : 'none';
-            if (mainView) mainView.style.display = tabName === 'main' ? 'flex' : 'none';
-            if (menuView) menuView.style.display = tabName === 'menu' ? 'block' : 'none';
-            if (dailyView) dailyView.style.display = tabName === 'daily' ? 'block' : 'none';
+    if (invView) invView.style.display = tabName === 'inventory' ? 'flex' : 'none';
+    if (shopView) shopView.style.display = tabName === 'shop' ? 'flex' : 'none';
+    if (mainView) mainView.style.display = tabName === 'main' ? 'flex' : 'none';
+    if (menuView) menuView.style.display = tabName === 'menu' ? 'block' : 'none';
+    if (dailyView) dailyView.style.display = tabName === 'daily' ? 'block' : 'none';
+    if (cultivationView) cultivationView.style.display = tabName === 'cultivation' ? 'flex' : 'none';
 
-            if (tabName === 'inventory') renderInventory();
-            if (tabName === 'shop') updateUI();
-            if (tabName === 'daily') renderDailyTasks();
-        }
-        // КОНЕЦ ФУНКЦИИ: switchTab
+    if (tabName === 'inventory') renderInventory();
+    if (tabName === 'shop') updateUI();
+    if (tabName === 'daily') renderDailyTasks();
 
+    // Обновление характеристик культивации
+    if (tabName === 'cultivation') updateUI();
+}
+// ================================================
+// КОНЕЦ ФУНКЦИИ: switchTab
+// ================================================
+
+      
         // НАЧАЛО ФУНКЦИИ: renderEquipment — отображает экипировку персонажа
 
         function renderEquipment() {
@@ -4139,7 +4279,41 @@ if (invShards) {
 if (invRebirth) {
     invRebirth.innerText = player.rebirthCount;
 }
-          
+        
+// ================================================
+// НАЧАЛО: ОБНОВЛЕНИЕ ХАРАКТЕРИСТИК КУЛЬТИВАЦИИ
+// ================================================
+
+const cultLevel = document.getElementById('cultivationLevel');
+const cultExp = document.getElementById('cultivationExp');
+const cultPower = document.getElementById('cultivationPower');
+const cultEnergy = document.getElementById('cultivationEnergy');
+const cultExpBar = document.getElementById('cultivationExpBar');
+
+if (cultLevel) cultLevel.innerText = player.level;
+
+if (cultExp) {
+    cultExp.innerText = `${player.exp} / ${player.maxExp}`;
+}
+
+if (cultPower) {
+    cultPower.innerText = Math.floor(player.power);
+}
+
+if (cultEnergy) {
+    cultEnergy.innerText =
+        `${Math.floor(player.energy)} / ${player.maxEnergy}`;
+}
+
+if (cultExpBar) {
+    cultExpBar.style.width =
+        Math.min((player.exp / player.maxExp) * 100, 100) + '%';
+}
+
+// ================================================
+// КОНЕЦ: ОБНОВЛЕНИЕ ХАРАКТЕРИСТИК КУЛЬТИВАЦИИ
+// ================================================
+  
             if (boneEl) boneEl.innerText = player.equipped.bone ? player.equipped.bone.name : 'Нет';
             if (rebirthCountText) rebirthCountText.innerText = player.rebirthCount;
             if (coinsDisplay) coinsDisplay.innerText = player.coins !== undefined ? player.coins : 1000;
