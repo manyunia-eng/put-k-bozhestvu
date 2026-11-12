@@ -340,10 +340,13 @@
         }
 
         /* Инвентарь: экипировка по бокам персонажа и растущий рюкзак */
-/* Центральная экипировка остаётся неподвижной; прокручивается только рюкзак */
+/* Экран инвентаря */
 #inventoryView {
-    overflow: hidden !important;
-}
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+          }
 
 
 
@@ -631,19 +634,31 @@
             padding:4px 3px 18px; box-sizing:border-box;
         }
 
-        /* ОДНА ЯЧЕЙКА РЮКЗАКА: размер, рамка и расположение содержимого */
-        .inventory-slot {
-            width:100%; min-width:0; min-height:94px; box-sizing:border-box;
-            display:flex; flex-direction:column; align-items:center;
-            justify-content:flex-start; gap:4px; padding:6px 3px;
-            border:1px solid rgba(51,65,85,.72); border-radius:8px;
-            background:linear-gradient(145deg,rgba(30,41,59,.84),rgba(2,6,23,.96));
-            overflow:hidden;
-        }
-        /* Подсветка ячейки, в которой лежит предмет */
-        .inventory-slot.has-item { border-color:rgba(56,189,248,.55); }
-        .empty-backpack { width:100%; padding:22px 10px; border:1px dashed rgba(100,116,139,.38); border-radius:10px; color:#64748b; font-size:12px; text-align:center; box-sizing:border-box; }
-        /* КАРТИНКА ПРЕДМЕТА ВНУТРИ ЯЧЕЙКИ */
+        
+/* ОДНА ЯЧЕЙКА РЮКЗАКА: компактный размер */
+.inventory-slot {
+    width:100%;
+    min-width:0;
+    min-height:82px;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    gap:3px;
+    padding:4px 2px;
+    border:1px solid rgba(51,65,85,.72);
+    border-radius:7px;
+    background:linear-gradient(145deg,rgba(30,41,59,.84),rgba(2,6,23,.96));
+    overflow:hidden;
+}
+
+/* Подсветка ячейки с предметом */
+.inventory-slot.has-item {
+    border-color:rgba(56,189,248,.55);
+}
+
+      /* КАРТИНКА ПРЕДМЕТА ВНУТРИ ЯЧЕЙКИ */
         .item-image-wrap { width:44px; height:44px; flex:0 0 44px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(148,163,184,.28); border-radius:7px; background:rgba(2,6,23,.75); overflow:hidden; background-size:300% 300%; background-repeat:no-repeat; }
         .inventory-item-image { width:100%; height:100%; object-fit:contain; display:block; }
         .item-fallback-icon { font-size:25px; }
@@ -656,7 +671,8 @@
         .inventory-item-action { width:100%; padding:5px 2px; border-radius:5px; border:1px solid #3b82f6; background:#1d4ed8; color:white; font-size:9px; font-weight:700; }
         .inventory-item-sell { width:100%; padding:5px 2px; border-radius:5px; border:1px solid #b45309; background:rgba(120,53,15,.92); color:#fde68a; font-size:9px; font-weight:700; }
         .inventory-item-sell:active, .inventory-item-action:active { transform:scale(.98); }
-        /* АДАПТАЦИЯ ЭКИПИРОВКИ ДЛЯ УЗКОГО ЭКРАНА ТЕЛЕФОНА */
+      
+      /* АДАПТАЦИЯ ЭКИПИРОВКИ ДЛЯ УЗКОГО ЭКРАНА ТЕЛЕФОНА */
         @media (max-width:420px) {
             .equipment-panel { padding:7px; gap:7px; margin-bottom:7px; }
             .equipment-layout { grid-template-columns: minmax(48px,1fr) minmax(88px,1.35fr) minmax(48px,1fr); gap:5px; padding:5px 2px; }
@@ -1434,6 +1450,7 @@ button.btn-rebirth{color:#fff!important;background:linear-gradient(105deg,#c16b9
  box-shadow:0 4px 10px rgba(74,88,139,.09),inset 0 1px white!important;
 }
 .system-menu-card b{color:#405987!important}.system-menu-card small{color:#71809b!important}
+.system-menu-card.is-ready
 .system-menu-card.is-ready{border-color:rgba(70,157,190,.38)!important;background:linear-gradient(145deg,#f5ffff,#e1f2fb)!important}
 .daily-summary{color:#50617d!important;border:1px solid rgba(77,157,194,.30)!important;background:linear-gradient(120deg,rgba(230,248,255,.95),rgba(239,235,255,.95))!important}
 .daily-task-card{border:1px solid rgba(126,117,179,.26)!important;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(232,238,253,.96))!important;box-shadow:0 4px 11px rgba(73,87,139,.08)!important}
@@ -1960,6 +1977,410 @@ button.sys-btn,
     z-index: 2;
     transition: 0.3s;
 }
+   
+/* ===== КОЛЕСО УДАЧИ ===== */
+
+#wheelView {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+#wheelView .extra-screen-inner {
+    padding-bottom: 30px;
+}
+
+#wheelView .wheel-description {
+    text-align: center;
+    margin: 15px 0;
+    padding: 14px;
+    border: 1px solid rgba(168, 85, 247, 0.45);
+    border-radius: 12px;
+    background: linear-gradient(
+        145deg,
+        rgba(30, 27, 75, 0.92),
+        rgba(15, 23, 42, 0.96)
+    );
+    color: #e2e8f0;
+}
+
+#wheelView .wheel-description p {
+    margin: 5px 0;
+}
+
+#wheelDailyStatus {
+    color: #facc15;
+    font-weight: bold;
+}
+
+#wheelView .wheel-container {
+    width: min(86vw, 340px);
+    aspect-ratio: 1;
+    margin: 35px auto 25px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== ИДЕАЛЬНО КРУГЛОЕ КОЛЕСО ===== */
+
+#wheelView .fortune-wheel {
+    width: min(78vw, 340px) !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+
+    box-sizing: border-box;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    position: relative;
+
+    border: 8px solid #d4a63c;
+
+    box-shadow:
+        0 0 12px #a855f7,
+        0 0 28px rgba(56, 189, 248, 0.5),
+        inset 0 0 15px #020617;
+
+    background: conic-gradient(
+        #7c3aed 0deg 45deg,
+        #1e40af 45deg 90deg,
+        #a855f7 90deg 135deg,
+        #1d4ed8 135deg 180deg,
+        #7c3aed 180deg 225deg,
+        #1e40af 225deg 270deg,
+        #a855f7 270deg 315deg,
+        #1d4ed8 315deg 360deg
+    );
+}
+
+/* ===== КОНЕЦ КРУГЛОГО КОЛЕСА ===== */
+
+#wheelView .fortune-wheel::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 215, 100, 0.8);
+    pointer-events: none;
+}
+
+      
+
+/* ===== ПРАВИЛЬНОЕ РАСПОЛОЖЕНИЕ НАГРАД ===== */
+
+#wheelView .fortune-wheel {
+    position: relative !important;
+}
+
+#wheelView .wheel-label {
+    position: absolute !important;
+    width: 27% !important;
+    height: 27% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    color: #fff !important;
+    font-size: clamp(8px, 2.5vw, 11px) !important;
+    font-weight: bold !important;
+    line-height: 1.15 !important;
+    text-shadow: 0 1px 4px #000, 0 0 5px #000 !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1 !important;
+    pointer-events: none;
+}
+
+/* Сектор 1 — верхний правый */
+#wheelView .label-1 {
+    top: 20%;
+    left: 62%;
+}
+
+/* Сектор 2 — правый верхний */
+#wheelView .label-2 {
+    top: 38%;
+    left: 80%;
+}
+
+/* Сектор 3 — правый нижний */
+#wheelView .label-3 {
+    top: 62%;
+    left: 80%;
+}
+
+/* Сектор 4 — нижний правый */
+#wheelView .label-4 {
+    top: 80%;
+    left: 65%;
+}
+
+/* Сектор 5 — нижний левый */
+#wheelView .label-5 {
+    top: 80%;
+    left: 38%;
+}
+
+/* Сектор 6 — левый нижний */
+#wheelView .label-6 {
+    top: 62%;
+    left: 20%;
+}
+
+/* Сектор 7 — левый верхний */
+#wheelView .label-7 {
+    top: 38%;
+    left: 20%;
+}
+
+/* Сектор 8 — верхний левый */
+#wheelView .label-8 {
+    top: 20%;
+    left: 36%;
+}
+
+/* ===== КОНЕЦ РАСПОЛОЖЕНИЯ НАГРАД ===== */
+
+      
+#wheelView .wheel-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, #facc15, #92400e);
+    border: 4px solid #fef3c7;
+    box-shadow: 0 0 18px #facc15;
+    font-size: 30px;
+    z-index: 2;
+}
+
+#wheelView .wheel-pointer {
+    position: absolute;
+    top: -19px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #facc15;
+    font-size: 38px;
+    z-index: 5;
+    filter: drop-shadow(0 0 7px #facc15);
+}
+
+#wheelView .wheel-result {
+    min-height: 48px;
+    margin: 15px 0;
+    padding: 13px;
+    text-align: center;
+    color: #fef3c7;
+    font-weight: bold;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(250, 204, 21, 0.5);
+    border-radius: 10px;
+}
+
+#wheelView .wheel-spin-button {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 15px auto;
+    padding: 15px;
+    border: 2px solid #facc15;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #7c3aed, #1e40af);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.45);
+}
+
+#wheelView .wheel-spin-button:disabled {
+    opacity: 0.65;
+    filter: grayscale(0.4);
+}
+
+/* ===== КОНЕЦ ОФОРМЛЕНИЯ КОЛЕСА ===== */
+   /* ===== ОФОРМЛЕНИЕ ШАНСОВ КОЛЕСА УДАЧИ ===== */
+
+#wheelView .wheel-chances {
+    width: 100%;
+    max-width: 420px;
+    margin: 20px auto;
+    padding: 16px;
+    box-sizing: border-box;
+
+    background: linear-gradient(
+        145deg,
+        rgba(25, 18, 55, 0.96),
+        rgba(10, 20, 48, 0.96)
+    );
+
+    border: 1px solid rgba(168, 85, 247, 0.65);
+    border-radius: 15px;
+
+    box-shadow:
+        0 0 15px rgba(124, 58, 237, 0.2),
+        inset 0 0 15px rgba(56, 189, 248, 0.06);
+
+    color: #e9e7ff;
+    font-size: 13px;
+}
+
+#wheelView .wheel-chances h3 {
+    margin: 0 0 12px;
+    text-align: center;
+    color: #d8b4fe;
+    font-size: 16px;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+}
+
+#wheelView .wheel-chances > div:not(.wheel-chances-total) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 4px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+#wheelView .wheel-chances b {
+    color: #facc15;
+    white-space: nowrap;
+}
+
+#wheelView .wheel-chances-total {
+    margin-top: 12px;
+    padding: 10px;
+    text-align: center;
+
+    color: #67e8f9;
+    font-weight: bold;
+
+    background: rgba(14, 116, 144, 0.15);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    border-radius: 9px;
+}
+
+/* ===== КОНЕЦ ОФОРМЛЕНИЯ ===== */
+
+      /* ===== КОЛЛЕКЦИЯ ГЕРОЕВ ===== */
+
+#heroCollectionView .hero-collection-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    max-width: 650px;
+    margin: 18px auto;
+}
+
+#heroCollectionView .hero-collection-card {
+    position: relative;
+    padding: 14px 10px;
+    text-align: center;
+    box-sizing: border-box;
+    border-radius: 16px;
+    background: linear-gradient(
+        145deg,
+        rgba(35, 27, 75, 0.97),
+        rgba(9, 20, 48, 0.97)
+    );
+    border: 1px solid rgba(139, 92, 246, 0.65);
+    box-shadow: 0 0 14px rgba(124, 58, 237, 0.18);
+}
+
+#heroCollectionView .hero-collection-card.unlocked {
+    border-color: rgba(56, 189, 248, 0.65);
+}
+
+#heroCollectionView .hero-collection-card.locked {
+    filter: grayscale(1);
+    opacity: 0.55;
+}
+
+#heroCollectionView .hero-collection-portrait {
+    width: 105px;
+    height: 125px;
+    margin: 0 auto 10px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 2px solid #8b5cf6;
+    box-shadow: 0 0 13px rgba(168, 85, 247, 0.5);
+}
+
+#heroCollectionView .hero-collection-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#heroCollectionView .hero-collection-card h3 {
+    margin: 8px 0;
+    color: #e9d5ff;
+    font-size: 15px;
+}
+
+#heroCollectionView .hero-collection-card p {
+    min-height: 48px;
+    color: #cbd5e1;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+#heroCollectionView .hero-collection-power {
+    margin: 10px 0;
+    color: #facc15;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+#heroCollectionView .hero-select-button {
+    width: 100%;
+    padding: 10px 5px;
+    border: 1px solid #38bdf8;
+    border-radius: 9px;
+    color: white;
+    font-weight: bold;
+    background: linear-gradient(135deg, #6d28d9, #0369a1);
+}
+
+#heroCollectionView .hero-selected-label {
+    padding: 9px 4px;
+    color: #facc15;
+    font-weight: bold;
+    border: 1px solid #d4a63c;
+    border-radius: 9px;
+    background: rgba(161, 98, 7, 0.2);
+}
+
+#heroCollectionView .hero-locked-label {
+    padding: 9px 4px;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+/* Адаптация для маленьких экранов */
+@media (max-width: 360px) {
+    #heroCollectionView .hero-collection-grid {
+        gap: 7px;
+    }
+
+    #heroCollectionView .hero-collection-card {
+        padding: 10px 6px;
+    }
+
+    #heroCollectionView .hero-collection-portrait {
+        width: 85px;
+        height: 105px;
+    }
+}
       
 </style>
 </head>
@@ -2458,8 +2879,6 @@ button.sys-btn,
             <button class="sys-btn btn-gate" onclick="openGatesModal()">🌀 Войти в Врата Разлома (E - SSS)</button>
             <button class="sys-btn btn-meditate" onclick="meditate()">🧘 Медитация Духа <small>(+Опыт, +Энергия)</small></button>
             
-            <button class="sys-btn" onclick="addTestItem()">🎁 [ТЕСТ] Получить предмет</button>
-            
             <div class="section-header" style="margin-top: 4px;">Прогрессия Системы</div>
             <button class="sys-btn btn-evolve" onclick="evolveHero()">✨ Эволюция Боевого Духа <small>(50 ур.)</small></button>
             <button class="sys-btn" style="background:#1e3a8a; border:none;" onclick="claimBonus()">🎁 Ежедневный Дар Системы</button>
@@ -2471,11 +2890,8 @@ button.sys-btn,
             <div class="log-row">[СИСТЕМА]: Преемственность поколений активирована. Добро пожаловать во Врата!</div>
         </div>
 
-        <!-- Дев Панель -->
-        <div style="display: flex; gap: 6px;">
-            <button class="sys-btn" style="flex: 1; background: #1e1b4b; border: 1px dashed var(--neon-purple); font-size: 10px; padding: 6px;" onclick="fastTestLevel99()">⚡ [ТЕСТ] 99 Уровень</button>
-            <button class="sys-btn" style="flex: 1; background: #020617; border: 1px solid #334155; color: #64748b; font-size: 10px; padding: 6px;" onclick="resetGame()">🔄 Сброс</button>
-        </div>
+        <!-- Обычная кнопка сброса игрового прогресса -->
+        <button class="sys-btn" style="background:#020617; border:1px solid #64748b; color:#cbd5e1; font-size:10px;" onclick="resetGame()">🔄 Сброс прогресса</button>
     </div>
 
     <!-- КОНЕЦ HTML-БЛОКА: инвентарь, экипировка и рюкзак -->
@@ -2598,8 +3014,12 @@ button.sys-btn,
     <b>🧭 Квест дня</b>
     <small>Сюжетное ежедневное поручение</small>
 </button>
-              <button class="system-menu-card" onclick="openSystemModule('Колесо')"><b>🎡 Колесо</b><small>Ежедневные вращения</small></button>
-                <button class="system-menu-card is-ready" onclick="openMailbox()">
+             <button class="system-menu-card is-ready" onclick="openSystemModule('Колесо')">
+    <b>🎡 Колесо</b>
+    <small>Ежедневные вращения</small>
+             </button>
+              
+              <button class="system-menu-card is-ready" onclick="openMailbox()">
     <b>📬 Почта <span id="mailUnreadBadge"></span></b>
     <small>Системные письма, события и подарки</small>
                 </button>
@@ -2608,10 +3028,10 @@ button.sys-btn,
             <div class="system-menu-grid">
                 <button class="system-menu-card is-ready" onclick="openSystemModule('Врата')"><b>🌀 Врата</b><small>Рейды и получение наград</small></button>
                 <button class="system-menu-card is-ready" onclick="openSystemModule('Арена')"><b>⚔️ Арена</b><small>Сражения и победы</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Фарм-зона')"><b>🌲 Фарм-зона</b><small>Место для добычи ресурсов</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Пристань')"><b>⛵ Пристань</b><small>Путешествия и экспедиции</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Башня Перерождения')"><b>🗼 Башня Перерождения</b><small>Испытания по этажам</small></button>
-                <button class="system-menu-card" onclick="openSystemModule('Охотник')"><b>🎯 Охотник</b><small>Поручения охотника</small></button>
+                <button class="system-menu-card is-ready" onclick="openSystemModule('Фарм-зона')"><b>🌲 Фарм-зона</b><small>Место для добычи ресурсов</small></button>
+                <button class="system-menu-card is-ready" onclick="openSystemModule('Пристань')"><b>⛵ Пристань</b><small>Путешествия и экспедиции</small></button>
+                <button class="system-menu-card is-ready" onclick="openSystemModule('Башня Перерождения')"><b>🗼 Башня Перерождения</b><small>Испытания по этажам</small></button>
+                <button class="system-menu-card is-ready" onclick="openSystemModule('Охотник')"><b>🎯 Охотник</b><small>Поручения охотника</small></button>
             </div>
             <div class="menu-section-title">Персонаж</div>
             <!-- ================================= -->
@@ -2625,13 +3045,17 @@ button.sys-btn,
         <small>Развитие духовной силы и уровня</small>
     </button>
 
-    <button class="system-menu-card" onclick="openSystemModule('Навыки')"><b>✨ Навыки</b><small>Умения и развитие способностей</small></button>
+    <button class="system-menu-card is-ready" onclick="openSystemModule('Навыки')"><b>✨ Навыки</b><small>Умения и развитие способностей</small></button>
 
-    <button class="system-menu-card" onclick="openSystemModule('Классы')"><b>🛡️ Классы</b><small>Боевые специализации</small></button>
+    <button class="system-menu-card is-ready" onclick="openSystemModule('Классы')"><b>🛡️ Классы</b><small>Боевые специализации</small></button>
 
-    <button class="system-menu-card" onclick="openSystemModule('Персонажи')"><b>🧑 Персонажи</b><small>Выбор боевого духа</small></button>
-
-    <button class="system-menu-card" onclick="openSystemModule('Манекен')"><b>🥊 Манекен</b><small>Проверка силы персонажа</small></button>
+<!-- Коллекция открытых героев -->
+<button class="system-menu-card is-ready" onclick="switchTab('heroCollection')">
+    <b>🧙 Коллекция героев</b>
+    <small>Открытые персонажи и выбор героя</small>
+</button>
+  
+    <button class="system-menu-card is-ready" onclick="openSystemModule('Манекен')"><b>🥊 Манекен</b><small>Проверка силы персонажа</small></button>
 
 </div>
 <!-- ================================= -->
@@ -2662,8 +3086,71 @@ button.sys-btn,
             </div>
         </div>
     </div>
+  <!-- КОНЕЦ HTML-БЛОКА: системное меню всех игровых разделов -->
 
-    <!-- КОНЕЦ HTML-БЛОКА: системное меню всех игровых разделов -->
+
+<!-- ===== МИР И ПРИКЛЮЧЕНИЯ: ФАРМ, ПРИСТАНЬ, БАШНЯ, ОХОТНИК ===== -->
+<div id="worldModulesView" class="extra-screen" style="display:none;">
+  <div class="extra-screen-inner">
+    <div class="extra-screen-header">
+      <h2 id="worldModuleTitle">🌍 Мир и приключения</h2>
+      <button class="extra-back" onclick="openSystemMenu()">← Меню</button>
+    </div>
+    <div class="daily-summary" id="worldModuleIntro">Исследуй мир, собирай ресурсы и проходи испытания.</div>
+    <div id="worldModuleContent"></div>
+  </div>
+</div>
+<!-- ===== КОНЕЦ МИРА И ПРИКЛЮЧЕНИЙ ===== -->
+
+  <!-- ===== РАЗДЕЛЫ ПЕРСОНАЖА: НАВЫКИ, КЛАССЫ И МАНЕКЕН ===== -->
+<div id="skillsView" class="extra-screen" style="display:none;">
+  <div class="extra-screen-inner">
+    <div class="extra-screen-header"><h2>✨ Навыки</h2><button class="extra-back" onclick="openSystemMenu()">← Меню</button></div>
+    <div class="daily-summary">Развивай способности героя. Улучшения постоянные и сохраняются в прогрессе.</div>
+    <div id="skillsContent"></div>
+  </div>
+</div>
+<div id="classesView" class="extra-screen" style="display:none;">
+  <div class="extra-screen-inner">
+    <div class="extra-screen-header"><h2>🛡️ Боевые классы</h2><button class="extra-back" onclick="openSystemMenu()">← Меню</button></div>
+    <div class="daily-summary">Выбери специализацию. Класс меняет боевой стиль и урон на тренировочном манекене.</div>
+    <div id="classesContent"></div>
+  </div>
+</div>
+<div id="mannequinView" class="extra-screen" style="display:none;">
+  <div class="extra-screen-inner">
+    <div class="extra-screen-header"><h2>🥊 Тренировочный манекен</h2><button class="extra-back" onclick="openSystemMenu()">← Меню</button></div>
+    <div class="daily-summary">Проверь силу выбранного героя, навыков и класса. Тренировка не расходует энергию и не выдаёт боевые награды.</div>
+    <div id="mannequinContent"></div>
+  </div>
+</div>
+<!-- ===== КОНЕЦ РАЗДЕЛОВ ПЕРСОНАЖА ===== -->
+
+  <!-- ===== КОЛЛЕКЦИЯ ГЕРОЕВ ===== -->
+<div id="heroCollectionView" class="extra-screen" style="display: none;">
+    <div class="extra-screen-inner">
+
+        <div class="extra-screen-header">
+            <h2>🧙 Коллекция героев</h2>
+            <button class="extra-back" onclick="openSystemMenu()">
+                ← Меню
+            </button>
+        </div>
+
+        <div class="daily-summary">
+            Собирай героев, открывай новых персонажей и выбирай своего боевого спутника!
+        </div>
+
+        <div id="heroCollectionStats"></div>
+
+        <div id="heroCollectionContent">
+            <p>Загрузка коллекции героев...</p>
+        </div>
+
+    </div>
+</div>
+<!-- ===== КОНЕЦ КОЛЛЕКЦИИ ГЕРОЕВ ===== -->
+  
   <!-- ===== ЭКРАН ПОЧТЫ ===== -->
 <div id="mailboxView" class="extra-screen" style="display:none;">
     <div class="extra-screen-inner">
@@ -2719,6 +3206,79 @@ button.sys-btn,
     </div>
     <!-- КОНЕЦ HTML-БЛОКА: экран квеста дня -->
   
+<!-- ===== НАЧАЛО: ЭКРАН КОЛЕСА УДАЧИ ===== -->
+<div id="wheelView" class="extra-screen" style="display: none;">
+  <div class="extra-screen-inner">
+
+        <div class="extra-screen-header">
+            <h2>🎡 Колесо удачи</h2>
+            <button class="extra-back" onclick="openSystemMenu()">
+                ← Меню
+            </button>
+        </div>
+
+        <div class="wheel-description">
+            <p>Испытай свою удачу и получи ценные награды!</p>
+            <p id="wheelDailyStatus">
+                🎁 Бесплатное вращение доступно!
+            </p>
+        </div>
+
+        <!-- Магическое колесо -->
+        <div class="wheel-container">
+            <div class="wheel-pointer">▼</div>
+
+            <div id="fortuneWheel" class="fortune-wheel">
+
+    <span class="wheel-label label-1">💰<br>100 золота</span>
+    <span class="wheel-label label-2">✨<br>50 опыта</span>
+    <span class="wheel-label label-3">💎<br>5 осколков</span>
+    <span class="wheel-label label-4">🎁<br>Обычный сундук</span>
+    <span class="wheel-label label-5">💰<br>150 золота</span>
+    <span class="wheel-label label-6">🔮<br>Материал<br>улучшения</span>
+    <span class="wheel-label label-7">⚔️<br>Редкий предмет</span>
+    <span class="wheel-label label-8">🧙<br>Обычный герой</span>
+
+    <div class="wheel-center">🎡</div>
+            </div>
+        </div>
+      <!-- ===== ШАНСЫ ВЫПАДЕНИЯ НАГРАД ===== -->
+<div class="wheel-chances">
+
+    <h3>📜 Шансы выпадения наград</h3>
+
+    <div>💰 100 золота — <b>30%</b></div>
+    <div>✨ 50 опыта — <b>25%</b></div>
+    <div>💎 5 осколков — <b>15%</b></div>
+    <div>🎁 Обычный сундук — <b>12%</b></div>
+    <div>💰 150 золота — <b>8%</b></div>
+    <div>🔮 Материал улучшения — <b>5%</b></div>
+    <div>⚔️ Редкий предмет — <b>4%</b></div>
+    <div>🧙 Обычный герой — <b>1%</b></div>
+
+    <div class="wheel-chances-total">
+        Общая вероятность: 100%
+    </div>
+
+</div>
+<!-- ===== КОНЕЦ ШАНСОВ ===== -->
+        <!-- Результат вращения -->
+        <div id="wheelResult" class="wheel-result">
+            Твоя удача ждёт тебя!
+        </div>
+
+        <!-- Кнопка вращения -->
+        <button
+    id="wheelSpinButton"
+    class="wheel-spin-button"
+    onclick="spinFortuneWheel()"
+    disabled>
+    🎁 Скоро можно будет вращать
+        </button>
+    <div>
+    </div>
+<!-- ===== КОНЕЦ: ЭКРАН КОЛЕСА УДАЧИ ===== -->
+
     <!-- КОНЕЦ HTML-БЛОКОВ ИНТЕРФЕЙСА: далее начинается логика игры на JavaScript -->
     <script>
     <!-- КОНЕЦ HTML-БЛОКА: экран ежедневных заданий -->
@@ -2733,6 +3293,8 @@ button.sys-btn,
             power: 15,
             shards: 0,
             heroKey: "",
+      // Коллекция открытых героев
+unlockedHeroes: [],
             heroName: "",
             heroIcon: "",
             heroAura: "#38bdf8",
@@ -2743,10 +3305,28 @@ button.sys-btn,
             inventory: [],
             equipped: { bone: null, weapon: null },
             equippedGear: {},
+      // Индивидуальная экипировка каждого героя
+heroEquipment: {
+    sanshi: {},
+    xiaoxiao: {},
+    beibei: {},
+    wangdong: {},
+    yuhao: {},
+    nannan: {},
+    caitou: {}
+},
             rebirthCount: 0,
             lastBonusTime: 0,
+      // Данные ежедневного колеса удачи
+wheelLastFreeSpin: '',
+wheelSpinning: false,
+      
             currentEpoch: 1,
             coins: 1000,
+            skillLevels: { power: 0, focus: 0, control: 0 },
+            classKey: 'warrior',
+            worldProgress: { farmRuns: 0, portRuns: 0, towerFloor: 0, hunterDate: '', hunterClaimed: {} },
+            mannequin: { hp: 1000, maxHp: 1000, bestHit: 0, totalDamage: 0, hits: 0 },
             dailyTasks: { date: "", progress: {}, claimed: {}, bonusClaimed: false },
 mailbox: [] 
     }
@@ -2850,6 +3430,103 @@ const heroes = [
 
 ];
 // КОНЕЦ БЛОКА ДАННЫХ: список семи игровых персонажей
+
+// ===== ОБЩАЯ ПРОГРЕССИЯ СИЛЫ И ЛИЧНАЯ ЭКИПИРОВКА ГЕРОЕВ =====
+function ensureHeroEquipmentState() {
+    if (!player.equippedGear || typeof player.equippedGear !== 'object') {
+        player.equippedGear = {};
+    }
+    if (!player.heroEquipment || typeof player.heroEquipment !== 'object') {
+        player.heroEquipment = {};
+    }
+
+    heroes.forEach(hero => {
+        if (
+            !player.heroEquipment[hero.key] ||
+            typeof player.heroEquipment[hero.key] !== 'object'
+        ) {
+            player.heroEquipment[hero.key] = {};
+        }
+    });
+
+    // Переносим старый комплект в личное хранилище текущего героя.
+    if (
+        player.heroKey &&
+        Object.keys(player.equippedGear).length > 0 &&
+        Object.keys(player.heroEquipment[player.heroKey] || {}).length === 0
+    ) {
+        player.heroEquipment[player.heroKey] = { ...player.equippedGear };
+    }
+
+    // Загружаем комплект выбранного героя.
+    if (player.heroKey && player.heroEquipment[player.heroKey]) {
+        player.equippedGear = { ...player.heroEquipment[player.heroKey] };
+    }
+}
+
+function getHeroBasePower(heroKey = player.heroKey) {
+    const hero = heroes.find(item => item.key === heroKey);
+    return hero ? (Number(hero.power) || 0) : 15;
+}
+
+function getEquippedGearPower() {
+    return Object.values(player.equippedGear || {}).reduce(
+        (total, item) => total + (Number(item?.power) || 0),
+        0
+    );
+}
+
+function getLegacyArtifactPower() {
+    return Number(player.equipped?.bone?.power) || 0;
+}
+
+// Сила = базовая сила героя + общие бонусы + его экипировка.
+function recalculatePlayerPower() {
+    const mult = (Number(player.rebirthCount) || 0) + 1;
+    const sharedArtifactPower = getLegacyArtifactPower();
+    player.power =
+        getHeroBasePower() +
+        (Number(player.powerBonus) || 0) +
+        (getEquippedGearPower() + sharedArtifactPower) * mult;
+}
+
+function initializePowerBonusFromLegacy() {
+    const hasSavedBonus =
+        player.powerBonus !== undefined &&
+        player.powerBonus !== null &&
+        player.powerBonus !== '' &&
+        Number.isFinite(Number(player.powerBonus));
+
+    if (!hasSavedBonus) {
+        const mult = (Number(player.rebirthCount) || 0) + 1;
+        const oldTotalPower = Number(player.power) || 15;
+        const oldEquipmentPower =
+            getEquippedGearPower() + getLegacyArtifactPower();
+
+        // Сохраняем уже заработанную силу из старых сохранений.
+        player.powerBonus = Math.max(
+            0,
+            oldTotalPower -
+                getHeroBasePower() -
+                oldEquipmentPower * mult
+        );
+    } else {
+        player.powerBonus = Number(player.powerBonus) || 0;
+    }
+
+    recalculatePlayerPower();
+}
+
+function addPowerBonus(amount) {
+    const value = Number(amount) || 0;
+    if (!Number.isFinite(Number(player.powerBonus))) {
+        initializePowerBonusFromLegacy();
+    }
+    player.powerBonus = (Number(player.powerBonus) || 0) + value;
+    recalculatePlayerPower();
+}
+// ===== КОНЕЦ БЛОКА ОБЩЕЙ СИЛЫ И ЭКИПИРОВКИ =====
+
 
 
 
@@ -3554,11 +4231,20 @@ function addMail(data = {}) {
 
         function openSystemModule(moduleName) {
             if (moduleName === 'Дела дня') return openDailyTasks();
+          if (moduleName === 'Колесо') return switchTab('wheel');
             if (moduleName === 'Арена') { switchTab('main'); openModal('arenaModal'); return; }
             if (moduleName === 'Гильдия') { switchTab('main'); openModal('guildModal'); return; }
             if (moduleName === 'Сумка') return switchTab('inventory');
+            if (moduleName === 'Навыки') return switchTab('skills');
+            if (moduleName === 'Классы') return switchTab('classes');
+            if (moduleName === 'Манекен') return switchTab('mannequin');
             if (moduleName === 'Магазин') return switchTab('shop');
             if (moduleName === 'Врата') { switchTab('main'); openGatesModal(); return; }
+            if (['Фарм-зона', 'Пристань', 'Башня Перерождения', 'Охотник'].includes(moduleName)) {
+                switchTab('worldModules');
+                renderWorldModule(moduleName);
+                return;
+            }
             showToast('Раздел «' + moduleName + '» будет реализован следующим этапом.');
         }
         // КОНЕЦ ФУНКЦИИ: openSystemModule
@@ -3567,50 +4253,88 @@ function addMail(data = {}) {
 
         function loadGame() {
             try {
-                let saved = localStorage.getItem('reborn_douluo_v4');
+                const saved = localStorage.getItem('reborn_douluo_v4');
+
                 if (saved) {
-                    let parsed = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
                     player = Object.assign({}, player, parsed);
-                    if (!player.inventory) player.inventory = [];
-                 
-                  // ===== ИНИЦИАЛИЗАЦИЯ ПОЧТЫ =====
-if (!Array.isArray(player.mailbox)) {
-    player.mailbox = [];
-}
-// ===== КОНЕЦ ИНИЦИАЛИЗАЦИИ ПОЧТЫ =====
-                  
-                    if (!player.equipped) player.equipped = { bone: null, weapon: null };
-                    if (!player.equippedGear) player.equippedGear = {};
+                    if (!player.skillLevels || typeof player.skillLevels !== 'object') player.skillLevels = { power: 0, focus: 0, control: 0 };
+                    player.skillLevels = {
+                        power: Math.max(0, Number(player.skillLevels.power) || 0),
+                        focus: Math.max(0, Number(player.skillLevels.focus) || 0),
+                        control: Math.max(0, Number(player.skillLevels.control) || 0)
+                    };
+                    if (!['warrior', 'guardian', 'mage', 'assassin'].includes(player.classKey)) player.classKey = 'warrior';
+                    if (!player.mannequin || typeof player.mannequin !== 'object') player.mannequin = {};
+                    player.mannequin = {
+                        hp: Number.isFinite(Number(player.mannequin.hp)) ? Math.max(0, Number(player.mannequin.hp)) : 1000,
+                        maxHp: Math.max(1, Number(player.mannequin.maxHp) || 1000),
+                        bestHit: Math.max(0, Number(player.mannequin.bestHit) || 0),
+                        totalDamage: Math.max(0, Number(player.mannequin.totalDamage) || 0),
+                        hits: Math.max(0, Number(player.mannequin.hits) || 0)
+                    };
+
+                    // Сбрасываем незавершённую анимацию после перезагрузки.
+                    player.wheelSpinning = false;
+
+                    if (!Array.isArray(player.unlockedHeroes)) {
+                        player.unlockedHeroes = [];
+                    }
+                    if (
+                        player.heroKey &&
+                        !player.unlockedHeroes.includes(player.heroKey)
+                    ) {
+                        player.unlockedHeroes.push(player.heroKey);
+                    }
+
+                    if (!Array.isArray(player.inventory)) player.inventory = [];
+                    if (!Array.isArray(player.mailbox)) player.mailbox = [];
+                    if (!player.equipped) {
+                        player.equipped = { bone: null, weapon: null };
+                    }
                     if (player.coins === undefined) player.coins = 1000;
+
                     player.maxExp = Math.max(100, Number(player.maxExp) || 100);
                     player.maxEnergy = Math.max(1, Number(player.maxEnergy) || 100);
-                    player.energy = Math.min(Math.max(0, Number(player.energy) || 0), player.maxEnergy);
+                    player.energy = Math.min(
+                        Math.max(0, Number(player.energy) || 0),
+                        player.maxEnergy
+                    );
+
+                    ensureHeroEquipmentState();
+                    initializePowerBonusFromLegacy();
+
                     log("Данные Системы загружены.");
+                } else {
+                    // Новая игра: личные комплекты пустые, общие бонусы равны нулю.
+                    ensureHeroEquipmentState();
+                    player.powerBonus = 0;
+                    recalculatePlayerPower();
                 }
             } catch (e) {
                 console.error("Ошибка загрузки:", e);
+                ensureHeroEquipmentState();
+                if (!Number.isFinite(Number(player.powerBonus))) {
+                    player.powerBonus = 0;
+                }
+                recalculatePlayerPower();
             }
 
-            // Инициализация ежедневных заданий без изменения старого прогресса
+            // Инициализация ежедневных заданий без изменения старого прогресса.
             ensureDailyTasks();
-          // Инициализация сюжетного квеста дня
-ensureDailyQuest();
-// ===== ОБНОВЛЕНИЕ ИНДИКАТОРА ПОЧТЫ ПРИ ЗАГРУЗКЕ =====
-updateMailBadge();
-          
-            // ===== ВОССТАНОВЛЕНИЕ ФОТОГРАФИИ ЭКИПИРОВКИ =====
-if (player.heroKey) {
-    updateEquipmentCharacterBackground();
-} else {
-    showHeroSelection();
-}
-        }
-      
-            // ===== СИГНАЛ: ИГРА ЗАГРУЗИЛА ЛОКАЛЬНОЕ СОХРАНЕНИЕ =====
+            ensureDailyQuest();
+            updateMailBadge();
+
+            if (player.heroKey) {
+                updateEquipmentCharacterBackground();
+            } else {
+                showHeroSelection();
+            }
+
+            // Сигнал для облачной загрузки.
             window.rebornGameLoaded = true;
             window.dispatchEvent(new Event('reborn-game-loaded'));
-            // ===== КОНЕЦ СИГНАЛА ЗАГРУЗКИ =====
-
+        }
         // КОНЕЦ ФУНКЦИИ: loadGame
 
 
@@ -3814,50 +4538,481 @@ function updateEquipmentCharacterBackground() {
 // ===== ВЫБОР ПЕРСОНАЖА =====
 // НАЧАЛО ФУНКЦИИ: selectHero — сохраняет выбранного героя и обновляет интерфейс
 function selectHero(h) {
+    if (!h) return;
 
-    // Сохраняем данные выбранного героя
+    if (!Array.isArray(player.unlockedHeroes)) {
+        player.unlockedHeroes = [];
+    }
+    if (!player.unlockedHeroes.includes(h.key)) {
+        player.unlockedHeroes.push(h.key);
+    }
+
+    // Инициализируем общую силу до переключения, чтобы ничего не потерять.
+    if (!Number.isFinite(Number(player.powerBonus))) {
+        initializePowerBonusFromLegacy();
+    }
+
+    ensureHeroEquipmentState();
+
+    // Сохраняем личный комплект предыдущего героя.
+    if (player.heroKey) {
+        player.heroEquipment[player.heroKey] = {
+            ...(player.equippedGear || {})
+        };
+    }
+
+    // Переключаем выбранного героя.
     player.heroKey = h.key;
     player.heroName = h.name;
     player.heroIcon = h.icon;
     player.heroAura = h.aura;
-    player.power = h.power;
     player.abilityDesc = h.ability;
 
-    // Устанавливаем отдельную фотографию экипировки
+    // Восстанавливаем только его личную экипировку.
+    if (!player.heroEquipment[h.key]) {
+        player.heroEquipment[h.key] = {};
+    }
+    player.equippedGear = { ...player.heroEquipment[h.key] };
+
+    // Сила героя учитывает его базу, общие бонусы и его экипировку.
+    recalculatePlayerPower();
+
     updateEquipmentCharacterBackground();
 
-    // Закрываем окно выбора персонажа
-    let modal = document.getElementById('heroModal');
-
+    const modal = document.getElementById('heroModal');
     if (modal) modal.style.display = 'none';
 
-    // Сохраняем прогресс
     log(`[СИСТЕМА]: Синхронизация с ${h.name} завершена.`);
-
     saveGame();
     updateUI();
 }
 // КОНЕЦ ФУНКЦИИ: selectHero
 
+      // ================================================
+// КОЛЛЕКЦИЯ ГЕРОЕВ
+// Отображение открытых и закрытых персонажей
+// ================================================
 
-        // НАЧАЛО ФУНКЦИИ: fastTestLevel99 — тестовая функция быстрого перехода на высокий уровень
+function renderHeroCollection() {
 
+    const content = document.getElementById('heroCollectionContent');
+    const stats = document.getElementById('heroCollectionStats');
 
-        function fastTestLevel99() {
-            player.level = 99;
-            player.exp = 0;
-            player.maxExp = 99999;
-            player.power += 5000;
-            player.shards += 5000;
-            player.energy = 100;
-            checkEpochProgression();
-            log("⚡ [ДЕВ]: Активирован 99 уровень!");
-            saveGame();
-            updateUI();
+    if (!content || !stats) return;
+
+    if (!Array.isArray(player.unlockedHeroes)) {
+        player.unlockedHeroes = [];
+    }
+
+    // Добавляем текущего героя, если он ещё не записан
+    if (player.heroKey && !player.unlockedHeroes.includes(player.heroKey)) {
+        player.unlockedHeroes.push(player.heroKey);
+    }
+
+    const unlockedCount = heroes.filter(hero =>
+        player.unlockedHeroes.includes(hero.key)
+    ).length;
+
+    stats.innerHTML = `
+        <div class="daily-summary">
+            🧙 Открыто героев: <b>${unlockedCount} / ${heroes.length}</b>
+        </div>
+    `;
+
+    content.innerHTML = `
+        <div class="hero-collection-grid">
+            ${heroes.map(hero => {
+
+                const unlocked = player.unlockedHeroes.includes(hero.key);
+                const selected = player.heroKey === hero.key;
+
+                return `
+                    <div class="hero-collection-card ${unlocked ? 'unlocked' : 'locked'}">
+
+                        <div class="hero-collection-portrait">
+                            <img src="${hero.icon}" alt="${hero.name}">
+                        </div>
+
+                        <h3>${unlocked ? hero.name : '???'}</h3>
+
+                        <p>${unlocked ? hero.ability : 'Герой ещё не открыт'}</p>
+
+                        <div class="hero-collection-power">
+                            ⚔️ Сила: ${unlocked ? hero.power : '???'}
+                        </div>
+
+                        ${selected
+                            ? '<div class="hero-selected-label">✓ Выбран</div>'
+                            : unlocked
+                                ? `<button class="hero-select-button" onclick="selectCollectionHero('${hero.key}')">Выбрать героя</button>`
+                                : '<div class="hero-locked-label">🔒 Не открыт</div>'
+                        }
+
+                    </div>
+                `;
+
+            }).join('')}
+        </div>
+    `;
+}
+
+// Выбор героя из коллекции
+function selectCollectionHero(heroKey) {
+
+    const hero = heroes.find(h => h.key === heroKey);
+
+    if (!hero) return;
+
+    if (!Array.isArray(player.unlockedHeroes) ||
+        !player.unlockedHeroes.includes(heroKey)) {
+        showToast('Этот герой ещё не открыт!');
+        return;
+    }
+
+    selectHero(hero);
+    renderHeroCollection();
+
+    showToast('Выбран герой: ' + hero.name);
+      }
+      
+      // ================================================
+// ПОЛУЧЕНИЕ ГЕРОЯ ИЗ НАГРАД
+// ================================================
+
+function obtainFortuneHero(hero) {
+    if (!hero) return;
+
+    if (!Array.isArray(player.unlockedHeroes)) {
+        player.unlockedHeroes = [];
+    }
+
+    // Проверяем, есть ли герой уже в коллекции
+    if (player.unlockedHeroes.includes(hero.key)) {
+        player.shards = (Number(player.shards) || 0) + 50;
+
+        showToast(
+            'Повторный герой: ' + hero.name +
+            '. Получено 50 духовных осколков!'
+        );
+
+        saveGame();
+        updateUI();
+        return;
+    }
+
+    // Добавляем нового героя в коллекцию
+    player.unlockedHeroes.push(hero.key);
+
+    showToast('Новый герой открыт: ' + hero.name + '!');
+
+    saveGame();
+    updateUI();
+}
+
+// ================================================
+// КОНЕЦ ПОЛУЧЕНИЯ ГЕРОЯ
+// ================================================
+
+      // ================================================
+// ДОБАВЛЕНИЕ НАГРАДЫ КОЛЕСА В ИНВЕНТАРЬ
+// ================================================
+
+function addFortuneItem(item) {
+    if (!Array.isArray(player.inventory)) {
+        player.inventory = [];
+    }
+
+    player.inventory.push({
+        name: item.name,
+        type: item.type,
+        power: item.power || 0,
+        icon: item.icon || '🎁',
+        image: item.image || '',
+        shopClass: item.shopClass || '',
+        description: item.description || 'Награда колеса удачи',
+        sellPrice: item.sellPrice || 0
+    });
+
+    saveGame();
+    updateUI();
+    renderInventory();
+}
+
+// ================================================
+// КОНЕЦ ДОБАВЛЕНИЯ НАГРАДЫ
+// ================================================
+
+      // ================================================
+// КАТАЛОГ СПЕЦИАЛЬНЫХ НАГРАД КОЛЕСА
+// ================================================
+
+const fortuneSpecialItems = {
+    commonChest: {
+        name: 'Обычный сундук',
+        type: 'chest',
+        power: 0,
+        icon: '🎁',
+        image: '',
+        description: 'Сундук с обычной случайной наградой.',
+        sellPrice: 0
+    },
+
+    upgradeMaterial: {
+        name: 'Материал улучшения',
+        type: 'material',
+        power: 0,
+        icon: '🔮',
+        image: '',
+        description: 'Материал для будущего улучшения экипировки.',
+        sellPrice: 0
+    }
+};
+
+// ================================================
+// КОНЕЦ КАТАЛОГА СПЕЦИАЛЬНЫХ НАГРАД
+// ================================================
+      // ================================================
+// ВЫБОР РЕДКОГО ПРЕДМЕТА
+// ================================================
+
+function getFortuneRareItem() {
+    const rareItems = [
+        'Шлем Скорпиона',
+        'Доспех Бабочки',
+        'Духовная Пушка',
+        'Щит Черепахи',
+        'Сапоги Следопыта',
+        'Ожерелье Духа',
+        'Кольцо Звёзд',
+        'Кристалл Артефакта'
+    ];
+
+    const itemName = rareItems[
+        Math.floor(Math.random() * rareItems.length)
+    ];
+
+    const catalog = {
+        'Шлем Скорпиона': {
+            type: 'shop',
+            power: 15,
+            icon: '🦂',
+            image: 'images/helmet_scorpion.png',
+            description: '+15% ментальная сила'
+        },
+        'Доспех Бабочки': {
+            type: 'shop',
+            power: 20,
+            icon: '🦋',
+            image: 'images/armor_butterfly.png',
+            description: '+20% скорость'
+        },
+        'Духовная Пушка': {
+            type: 'shop',
+            power: 50,
+            icon: '💥',
+            image: 'images/spirit_cannon.png',
+            description: '+50 урон'
+        },
+        'Щит Черепахи': {
+            type: 'shop',
+            power: 40,
+            icon: '🛡️',
+            image: 'images/shield_turtle.png',
+            description: '+40% броня'
+        },
+        'Сапоги Следопыта': {
+            type: 'shop',
+            power: 18,
+            icon: '🥾',
+            image: 'images/boots_tracker.png',
+            description: '+18 сила · обувь'
+        },
+        'Ожерелье Духа': {
+            type: 'shop',
+            power: 22,
+            icon: '📿',
+            image: 'images/necklace_spirit.png',
+            description: '+22 сила · амулет'
+        },
+        'Кольцо Звёзд': {
+            type: 'shop',
+            power: 25,
+            icon: '💍',
+            image: 'images/ring_stars.png',
+            description: '+25 сила · кольцо'
+        },
+        'Кристалл Артефакта': {
+            type: 'shop',
+            power: 35,
+            icon: '🔮',
+            image: 'images/crystal_artifact.png',
+            description: '+35 сила · артефакт'
         }
-        // КОНЕЦ ФУНКЦИИ: fastTestLevel99
+    };
 
-        // НАЧАЛО ФУНКЦИИ: openModal — открывает указанное модальное окно
+    const item = catalog[itemName];
+
+    return {
+        name: 'Редкий ' + itemName,
+        type: 'rare',
+        power: Math.floor(item.power * 1.5),
+        icon: item.icon,
+        image: item.image,
+        description: 'Редкая версия предмета. ' + item.description,
+        sellPrice: 0
+    };
+}
+
+// ================================================
+// КОНЕЦ ВЫБОРА РЕДКОГО ПРЕДМЕТА
+// ================================================
+      // ================================================
+// ВЫДАЧА НАГРАДЫ КОЛЕСА УДАЧИ
+// ================================================
+
+function giveFortuneReward(reward) {
+    if (!reward) return;
+
+    let resultText = '';
+
+    switch (reward.type) {
+
+        case 'coins':
+            player.coins = (Number(player.coins) || 0) + reward.amount;
+            resultText = '💰 Получено ' + reward.amount + ' золота!';
+            break;
+
+        case 'exp':
+            player.exp = (Number(player.exp) || 0) + reward.amount;
+            checkLevelUp();
+            resultText = '✨ Получено ' + reward.amount + ' опыта!';
+            break;
+
+        case 'shards':
+            player.shards = (Number(player.shards) || 0) + reward.amount;
+            resultText = '💎 Получено ' + reward.amount + ' осколков!';
+            break;
+
+        case 'chest':
+            addFortuneItem(fortuneSpecialItems.commonChest);
+            resultText = '🎁 Получен обычный сундук!';
+            break;
+
+        case 'material':
+            addFortuneItem(fortuneSpecialItems.upgradeMaterial);
+            resultText = '🔮 Получен материал улучшения!';
+            break;
+
+        case 'rare': {
+            const rareItem = getFortuneRareItem();
+            addFortuneItem(rareItem);
+            resultText = '⚔️ Получен редкий предмет: ' + rareItem.name + '!';
+            break;
+        }
+
+        case 'hero': {
+    if (!Array.isArray(heroes) || heroes.length === 0) {
+        showToast('Список героев пока недоступен.');
+        return;
+    }
+
+    const hero = heroes[Math.floor(Math.random() * heroes.length)];
+
+    const alreadyOwned = player.unlockedHeroes.includes(hero.key);
+
+    obtainFortuneHero(hero);
+
+    if (alreadyOwned) {
+        resultText = '💎 Повторный герой: ' + hero.name +
+            '. Компенсация: 50 осколков!';
+    } else {
+        resultText = '🧙 Новый герой открыт: ' + hero.name + '!';
+    }
+
+    break;
+        }
+
+    } // КОНЕЦ switch
+
+    saveGame();
+    updateUI();
+
+    const result = document.getElementById('wheelResult');
+
+    if (result) {
+        result.textContent = resultText;
+    }
+
+    return resultText;
+}
+
+// ================================================
+// КОНЕЦ ВЫДАЧИ НАГРАДЫ
+// ================================================
+      // ================================================
+// ВРАЩЕНИЕ КОЛЕСА УДАЧИ
+// ================================================
+
+function spinFortuneWheel() {
+
+    if (player.wheelSpinning) return;
+
+    const today = getWheelLocalDate();
+
+    // Проверяем бесплатное вращение
+    if (player.wheelLastFreeSpin === today) {
+        updateFortuneWheel();
+        return;
+    }
+
+    // Блокируем повторное нажатие
+    player.wheelSpinning = true;
+    player.wheelLastFreeSpin = today;
+
+    const button = document.getElementById('wheelSpinButton');
+    const result = document.getElementById('wheelResult');
+
+    if (button) {
+        button.disabled = true;
+        button.textContent = '🎡 Колесо вращается...';
+    }
+
+    if (result) {
+        result.textContent = '✨ Система определяет твою награду...';
+    }
+
+    saveGame();
+
+    // Выбираем награду
+    const reward = getFortuneWheelReward();
+    const rewardIndex = fortuneWheelRewards.indexOf(reward);
+
+    // Сразу сохраняем награду
+    const rewardText = giveFortuneReward(reward);
+
+    if (result) {
+        result.textContent = '🎡 Колесо вращается...';
+    }
+
+    // Запускаем анимацию
+    animateFortuneWheel(rewardIndex, function() {
+
+        if (result) {
+            result.textContent = rewardText || '🎁 Награда получена!';
+        }
+
+        player.wheelSpinning = false;
+
+        saveGame();
+        updateFortuneWheel();
+    });
+}
+
+// ================================================
+// КОНЕЦ ВРАЩЕНИЯ КОЛЕСА
+// ================================================
+
+// НАЧАЛО ФУНКЦИИ: openModal — открывает указанное модальное окно
 
         function openModal(id) {
             let el = document.getElementById(id);
@@ -4057,7 +5212,7 @@ function buyShopItem(itemName, price) {
             player.energy -= g.energyCost;
             let mult = player.rebirthCount + 1;
 
-            let effectivePower = player.power;
+            let effectivePower = getCharacterCombatPower();
             if (player.heroKey === 'tang_san' || player.heroKey === 'dai_mubai') effectivePower *= 1.25;
 
             if (effectivePower >= g.reqPower) {
@@ -4111,7 +5266,7 @@ function updateArenaUI() {
             let enemyPower = 35 + player.level * 14;
             let mult = player.rebirthCount + 1;
 
-            if (player.power >= enemyPower) {
+            if (getCharacterCombatPower() >= enemyPower) {
                 player.arenaWins++;
               addDailyQuestProgress('arenaWin', 1);
                 let rewardShards = 25 * mult;
@@ -4141,7 +5296,6 @@ function updateArenaUI() {
         // КОНЕЦ ФУНКЦИИ: updateGuildUI
 
         // НАЧАЛО ФУНКЦИИ: upgradeGuild — улучшает уровень гильдии
-
         function upgradeGuild() {
             let cost = player.guildLevel * 40;
             if (player.heroKey === 'ning_rongrong') cost = Math.floor(cost * 0.8);
@@ -4149,7 +5303,7 @@ function updateArenaUI() {
             if (player.shards >= cost) {
                 player.shards -= cost;
                 player.guildLevel++;
-                player.power += 30 * (player.rebirthCount + 1);
+                addPowerBonus(30 * (player.rebirthCount + 1));
                 log(`🏛️ [БАЗА]: Уровень повышен до ${player.guildLevel}!`);
                 saveGame();
                 updateUI();
@@ -4165,7 +5319,7 @@ function updateArenaUI() {
         function evolveHero() {
             if (player.level >= 50 && !player.isEvolved) {
                 player.isEvolved = true;
-                player.power += 400 * (player.rebirthCount + 1);
+                addPowerBonus(400 * (player.rebirthCount + 1));
                 player.heroName = `👑 Бог (${player.heroName})`;
                 log(`✨ [ЭВОЛЮЦИЯ]: Божественная форма достигнута!`);
                 saveGame();
@@ -4179,6 +5333,279 @@ function updateArenaUI() {
         // КОНЕЦ ФУНКЦИИ: evolveHero
 
        
+
+// ===== РАБОЧИЕ СИСТЕМЫ: НАВЫКИ, КЛАССЫ И МАНЕКЕН =====
+const characterSkills = [
+    { key: 'power', name: 'Сила духа', icon: '⚔️', description: 'Увеличивает постоянную боевую силу и урон по манекену.', bonus: ' +8% урона за уровень' },
+    { key: 'focus', name: 'Концентрация', icon: '🎯', description: 'Повышает шанс критического удара по манекену.', bonus: ' +3% крит. шанса за уровень' },
+    { key: 'control', name: 'Контроль энергии', icon: '🔮', description: 'Усиливает духовную технику и урон по манекену.', bonus: ' +5% урона за уровень' }
+];
+const characterClasses = [
+    { key: 'warrior', name: 'Воин', icon: '⚔️', desc: 'Сбалансированная специализация.', multiplier: 1.10 },
+    { key: 'guardian', name: 'Страж', icon: '🛡️', desc: 'Надёжная защита и устойчивость.', multiplier: 1.05 },
+    { key: 'mage', name: 'Мистик', icon: '🔮', desc: 'Усиленные духовные техники.', multiplier: 1.15 },
+    { key: 'assassin', name: 'Ассасин', icon: '🗡️', desc: 'Высокий урон точечными атаками.', multiplier: 1.20 }
+];
+function ensureCharacterSystems() {
+    if (!player.skillLevels || typeof player.skillLevels !== 'object') player.skillLevels = { power: 0, focus: 0, control: 0 };
+    if (!['warrior', 'guardian', 'mage', 'assassin'].includes(player.classKey)) player.classKey = 'warrior';
+    if (!player.mannequin || typeof player.mannequin !== 'object') player.mannequin = { hp: 1000, maxHp: 1000, bestHit: 0, totalDamage: 0, hits: 0 };
+    if (!player.worldProgress || typeof player.worldProgress !== 'object') player.worldProgress = {};
+    player.worldProgress.farmRuns = Math.max(0, Number(player.worldProgress.farmRuns) || 0);
+    player.worldProgress.portRuns = Math.max(0, Number(player.worldProgress.portRuns) || 0);
+    player.worldProgress.towerFloor = Math.max(0, Number(player.worldProgress.towerFloor) || 0);
+    if (!player.worldProgress.hunterClaimed || typeof player.worldProgress.hunterClaimed !== 'object') player.worldProgress.hunterClaimed = {};
+    const hunterToday = new Date().toLocaleDateString('sv-SE');
+    if (player.worldProgress.hunterDate !== hunterToday) {
+        player.worldProgress.hunterDate = hunterToday;
+        player.worldProgress.hunterClaimed = {};
+    }
+}
+function getCharacterCombatPower() {
+    ensureCharacterSystems();
+    const cls = characterClasses.find(item => item.key === player.classKey) || characterClasses[0];
+    const skills = player.skillLevels;
+    const skillMultiplier = 1 + (Number(skills.power) || 0) * 0.08 + (Number(skills.control) || 0) * 0.05;
+    return Math.max(1, (Number(player.power) || 1) * cls.multiplier * skillMultiplier);
+}
+function getSkillUpgradeCost(level) {
+    return { coins: 100 * (level + 1), shards: 5 * (level + 1) };
+}
+function renderSkills() {
+    ensureCharacterSystems();
+    const el = document.getElementById('skillsContent');
+    if (!el) return;
+    el.innerHTML = characterSkills.map(skill => {
+        const level = player.skillLevels[skill.key] || 0;
+        const cost = getSkillUpgradeCost(level);
+        const maxed = level >= 5;
+        return `<div class="daily-task-card" style="margin:10px 0;padding:14px;border-radius:12px;">
+            <div style="font-size:17px;font-weight:bold;">${skill.icon} ${skill.name} <span style="float:right;color:#6d28d9;">${level}/5</span></div>
+            <p>${skill.description}</p><small>${skill.bonus}</small>
+            <button class="sys-btn" style="width:100%;margin-top:10px;" ${maxed ? 'disabled' : ''} onclick="upgradeCharacterSkill('${skill.key}')">${maxed ? 'Максимальный уровень' : `Улучшить · ${cost.coins} монет · ${cost.shards} осколков`}</button>
+        </div>`;
+    }).join('');
+}
+function upgradeCharacterSkill(key) {
+    ensureCharacterSystems();
+    const skill = characterSkills.find(item => item.key === key);
+    if (!skill) return;
+    const level = player.skillLevels[key] || 0;
+    if (level >= 5) return showToast('Навык уже достиг максимального уровня.');
+    const cost = getSkillUpgradeCost(level);
+    if ((Number(player.coins) || 0) < cost.coins || (Number(player.shards) || 0) < cost.shards) {
+        return showToast(`Нужно ${cost.coins} монет и ${cost.shards} осколков.`);
+    }
+    player.coins -= cost.coins;
+    player.shards -= cost.shards;
+    player.skillLevels[key] = level + 1;
+    saveGame(); updateUI(); renderSkills();
+    showToast(`Навык «${skill.name}» улучшен до ${level + 1} уровня!`);
+}
+function renderClasses() {
+    ensureCharacterSystems();
+    const el = document.getElementById('classesContent');
+    if (!el) return;
+    el.innerHTML = characterClasses.map(cls => {
+        const selected = player.classKey === cls.key;
+        return `<div class="daily-task-card" style="margin:10px 0;padding:14px;border-radius:12px;border:1px solid ${selected ? '#7c3aed' : 'rgba(100,100,140,.25)'};">
+            <div style="font-size:17px;font-weight:bold;">${cls.icon} ${cls.name} ${selected ? '✓' : ''}</div>
+            <p>${cls.desc}</p><small>Множитель урона на манекене: ×${cls.multiplier.toFixed(2)}</small>
+            <button class="sys-btn" style="width:100%;margin-top:10px;" ${selected ? 'disabled' : ''} onclick="selectCharacterClass('${cls.key}')">${selected ? 'Выбрано' : 'Выбрать класс'}</button>
+        </div>`;
+    }).join('');
+}
+function selectCharacterClass(key) {
+    ensureCharacterSystems();
+    if (!characterClasses.some(cls => cls.key === key)) return;
+    player.classKey = key;
+    saveGame(); renderClasses();
+    showToast('Боевая специализация изменена.');
+}
+function getMannequinMaxHp() {
+    return Math.max(1000, Math.floor((Number(player.power) || 15) * 25));
+}
+function renderMannequin() {
+    ensureCharacterSystems();
+    const el = document.getElementById('mannequinContent');
+    if (!el) return;
+    const m = player.mannequin;
+    const cls = characterClasses.find(item => item.key === player.classKey) || characterClasses[0];
+    const hp = Math.max(0, Number(m.hp) || 0);
+    const maxHp = Math.max(1, Number(m.maxHp) || getMannequinMaxHp());
+    const percent = Math.max(0, Math.min(100, hp / maxHp * 100));
+    el.innerHTML = `<div class="daily-task-card" style="padding:18px;text-align:center;border-radius:14px;">
+        <div style="font-size:48px;margin:8px;">🥊</div>
+        <h3 style="margin:6px;">Духовный тренировочный манекен</h3>
+        <div style="margin:12px 0;">Прочность: <b>${hp.toLocaleString('ru-RU')} / ${maxHp.toLocaleString('ru-RU')}</b></div>
+        <div style="height:14px;background:#d6d3e2;border-radius:20px;overflow:hidden;"><div style="height:100%;width:${percent}%;background:linear-gradient(90deg,#7c3aed,#0ea5e9);"></div></div>
+        <p>Герой: <b>${player.heroName || 'Не выбран'}</b><br>Класс: <b>${cls.name}</b><br>Боевая сила: <b>${Number(player.power) || 0}</b></p>
+        <button class="sys-btn" style="width:100%;margin:8px 0;" onclick="strikeMannequin()" ${hp <= 0 ? 'disabled' : ''}>🥊 Нанести удар</button>
+        <button class="sys-btn" style="width:100%;" onclick="resetMannequin()">🔄 Восстановить манекен</button>
+        <div style="margin-top:16px;text-align:left;border-top:1px solid rgba(100,100,140,.3);padding-top:12px;">
+            <b>Результаты тренировки</b><p>Лучший удар: <b>${(Number(m.bestHit) || 0).toLocaleString('ru-RU')}</b></p>
+            <p>Общий урон: <b>${(Number(m.totalDamage) || 0).toLocaleString('ru-RU')}</b></p>
+            <p>Количество ударов: <b>${Number(m.hits) || 0}</b></p>
+        </div>
+    </div>`;
+}
+function strikeMannequin() {
+    ensureCharacterSystems();
+    const m = player.mannequin;
+    if ((Number(m.hp) || 0) <= 0) return showToast('Манекен уже разрушен. Восстанови его.');
+    const cls = characterClasses.find(item => item.key === player.classKey) || characterClasses[0];
+    const skills = player.skillLevels;
+    const base = getCharacterCombatPower();
+    const criticalChance = Math.min(50, 5 + (skills.focus || 0) * 3);
+    const critical = Math.random() * 100 < criticalChance;
+    const damage = Math.max(1, Math.floor(base * (critical ? 1.75 : 1)));
+    const dealt = Math.min(Number(m.hp) || 0, damage);
+    m.hp = Math.max(0, (Number(m.hp) || 0) - dealt);
+    m.bestHit = Math.max(Number(m.bestHit) || 0, dealt);
+    m.totalDamage = (Number(m.totalDamage) || 0) + dealt;
+    m.hits = (Number(m.hits) || 0) + 1;
+    saveGame(); renderMannequin();
+    showToast(`${critical ? 'Критический удар! ' : ''}Урон: ${dealt}`);
+    if (m.hp <= 0) showToast('Манекен разрушен! Восстанови его для новой тренировки.');
+}
+function resetMannequin() {
+    ensureCharacterSystems();
+    const maxHp = getMannequinMaxHp();
+    player.mannequin.hp = maxHp;
+    player.mannequin.maxHp = maxHp;
+    saveGame(); renderMannequin();
+    showToast('Манекен восстановлен.');
+}
+// ===== КОНЕЦ РАБОЧИХ СИСТЕМ ПЕРСОНАЖА =====
+
+
+// ===== РАБОЧИЕ СИСТЕМЫ МИРА И ПРИКЛЮЧЕНИЙ =====
+const hunterContracts = [
+    { id:'farm', icon:'🌿', name:'Сборщик ресурсов', desc:'Соверши 2 вылазки в Фарм-зону.', target:2, reward:{coins:180, shards:8, exp:60} },
+    { id:'port', icon:'⛵', name:'Морской исследователь', desc:'Отправься в 1 экспедицию с Пристани.', target:1, reward:{coins:220, shards:10, exp:80} },
+    { id:'tower', icon:'🗼', name:'Покоритель башни', desc:'Преодолей 1 этаж Башни Перерождения.', target:1, reward:{coins:250, shards:12, exp:100} }
+];
+function worldRewardText(reward) {
+    return `+${reward.coins} монет · +${reward.shards} осколков · +${reward.exp} опыта`;
+}
+function giveWorldReward(reward) {
+    player.coins = (Number(player.coins)||0) + reward.coins;
+    player.shards = (Number(player.shards)||0) + reward.shards;
+    player.exp = (Number(player.exp)||0) + reward.exp;
+    if (typeof checkLevelUp === 'function') checkLevelUp();
+    if (typeof updateUI === 'function') updateUI();
+    saveGame();
+}
+function renderWorldModule(moduleName) {
+    ensureCharacterSystems();
+    const title = document.getElementById('worldModuleTitle');
+    const intro = document.getElementById('worldModuleIntro');
+    const content = document.getElementById('worldModuleContent');
+    if (!title || !content) return;
+    const data = {
+        'Фарм-зона': ['🌲 Фарм-зона', 'Выбирай подходящую локацию, расходуй энергию и добывай материалы, монеты и опыт.'],
+        'Пристань': ['⛵ Пристань', 'Отправляйся в экспедиции за редкими находками и наградами.'],
+        'Башня Перерождения': ['🗼 Башня Перерождения', 'Поднимайся по этажам. С каждым этажом противники становятся сильнее, а награды ценнее.'],
+        'Охотник': ['🎯 Охотник', 'Выполняй ежедневные поручения и забирай награды за приключения.']
+    }[moduleName];
+    if (!data) return;
+    title.textContent = data[0];
+    intro.textContent = data[1];
+
+    if (moduleName === 'Фарм-зона') {
+        const places = [
+            {id:'grove',name:'🌱 Лес духов',level:1,cost:8,coins:45,shards:2,exp:25,material:'Травы духа'},
+            {id:'cave',name:'⛏️ Каменная пещера',level:10,cost:12,coins:75,shards:4,exp:45,material:'Руда духа'},
+            {id:'ruins',name:'🏛️ Древние руины',level:25,cost:18,coins:120,shards:7,exp:70,material:'Осколок реликвии'}
+        ];
+        content.innerHTML = `<div class="daily-task-card" style="padding:14px;margin:10px 0;"><b>⚡ Энергия: ${player.energy}/${player.maxEnergy||100}</b><br><small>Всего вылазок: ${player.worldProgress.farmRuns}</small></div>` + places.map(x=>`
+          <div class="daily-task-card" style="padding:14px;margin:10px 0;">
+            <b style="font-size:16px;">${x.name}</b><p>Требуемый уровень: ${x.level} · Энергия: ${x.cost}</p>
+            <small>Награда: ${x.coins} монет · ${x.shards} осколков · ${x.exp} опыта · материал «${x.material}»</small>
+            <button class="sys-btn" style="width:100%;margin-top:10px;" onclick="runFarmZone('${x.id}')">${player.level<x.level?'🔒 Недоступно':'🌿 Отправиться'}</button>
+          </div>`).join('');
+    } else if (moduleName === 'Пристань') {
+        content.innerHTML = `<div class="daily-task-card" style="padding:16px;text-align:center;">
+          <div style="font-size:48px;">⛵</div><h3>Экспедиция «Затерянные острова»</h3>
+          <p>Требуется уровень 5, 100 монет и 15 энергии.</p>
+          <p>Экспедиции приносят монеты, осколки, опыт и материалы.</p>
+          <button class="sys-btn" style="width:100%;" onclick="startPortExpedition()" ${player.level<5?'disabled':''}>Отправить корабль</button>
+          <p>Завершено экспедиций: <b>${player.worldProgress.portRuns}</b></p>
+        </div>`;
+    } else if (moduleName === 'Башня Перерождения') {
+        const floor = player.worldProgress.towerFloor + 1;
+        const required = 40 + floor * 35;
+        content.innerHTML = `<div class="daily-task-card" style="padding:16px;text-align:center;">
+          <div style="font-size:48px;">🗼</div><h3>Этаж ${floor}</h3>
+          <p>Твоя боевая сила: <b>${Math.floor(getCharacterCombatPower())}</b></p>
+          <p>Требуемая сила: <b>${required}</b> · Энергия: 12</p>
+          <p>Покорено этажей: <b>${player.worldProgress.towerFloor}</b></p>
+          <button class="sys-btn" style="width:100%;" onclick="challengeRebirthTower()">⚔️ Испытать силы</button>
+        </div>`;
+    } else {
+        content.innerHTML = hunterContracts.map(c=>{
+          const claimed=!!player.worldProgress.hunterClaimed[c.id];
+          const done=c.id==='farm'?player.worldProgress.farmRuns>=2:c.id==='port'?player.worldProgress.portRuns>=1:player.worldProgress.towerFloor>=1;
+          return `<div class="daily-task-card" style="padding:14px;margin:10px 0;">
+            <b style="font-size:16px;">${c.icon} ${c.name}</b><p>${c.desc}</p>
+            <small>Награда: ${worldRewardText(c.reward)}</small>
+            <button class="sys-btn" style="width:100%;margin-top:10px;" onclick="claimHunterContract('${c.id}')" ${claimed||!done?'disabled':''}>${claimed?'✓ Награда получена':done?'🎁 Забрать награду':'Задание не выполнено'}</button>
+          </div>`;
+        }).join('');
+    }
+}
+function runFarmZone(id) {
+    ensureCharacterSystems();
+    const places={grove:{level:1,cost:8,coins:45,shards:2,exp:25,material:'Травы духа'},cave:{level:10,cost:12,coins:75,shards:4,exp:45,material:'Руда духа'},ruins:{level:25,cost:18,coins:120,shards:7,exp:70,material:'Осколок реликвии'}};
+    const p=places[id]; if(!p) return;
+    if(player.level<p.level) return showToast(`Для этой локации нужен ${p.level} уровень.`);
+    if(player.energy<p.cost) return showToast('Недостаточно энергии.');
+    player.energy-=p.cost; player.worldProgress.farmRuns++;
+    player.coins=(Number(player.coins)||0)+p.coins; player.shards=(Number(player.shards)||0)+p.shards; player.exp=(Number(player.exp)||0)+p.exp;
+    player.inventory=Array.isArray(player.inventory)?player.inventory:[];
+    player.inventory.push({type:'material',name:p.material,icon:'🌿',power:0});
+    checkLevelUp(); saveGame(); updateUI(); renderWorldModule('Фарм-зона');
+    showToast(`Добыча завершена: ${p.material}, +${p.coins} монет.`);
+}
+function startPortExpedition() {
+    ensureCharacterSystems();
+    if(player.level<5) return showToast('Пристань откроется на 5 уровне.');
+    if(player.coins<100 || player.energy<15) return showToast('Нужно 100 монет и 15 энергии.');
+    player.coins-=100; player.energy-=15; player.worldProgress.portRuns++;
+    const roll=Math.random();
+    const reward=roll<.15?{coins:260,shards:18,exp:120}:{coins:150,shards:9,exp:75};
+    giveWorldReward(reward);
+    if(roll<.15){player.inventory.push({type:'material',name:'Морская реликвия',icon:'⚓',power:0});saveGame();}
+    renderWorldModule('Пристань');
+    showToast(`Экспедиция вернулась! ${worldRewardText(reward)}`);
+}
+function challengeRebirthTower() {
+    ensureCharacterSystems();
+    const floor=player.worldProgress.towerFloor+1, required=40+floor*35;
+    if(player.energy<12) return showToast('Недостаточно энергии.');
+    player.energy-=12;
+    if(getCharacterCombatPower()>=required){
+        player.worldProgress.towerFloor=floor;
+        const reward={coins:90+floor*25,shards:5+floor*2,exp:50+floor*20};
+        giveWorldReward(reward);
+        showToast(`Этаж ${floor} пройден! ${worldRewardText(reward)}`);
+    } else {
+        saveGame(); updateUI(); showToast(`Испытание не пройдено. Нужно ${required} силы.`);
+    }
+    renderWorldModule('Башня Перерождения');
+}
+function claimHunterContract(id) {
+    ensureCharacterSystems();
+    const c=hunterContracts.find(x=>x.id===id); if(!c) return;
+    if(player.worldProgress.hunterClaimed[id]) return showToast('Это поручение уже выполнено сегодня.');
+    const progress=player.worldProgress;
+    const done=id==='farm'?progress.farmRuns>=2:id==='port'?progress.portRuns>=1:progress.towerFloor>=1;
+    if(!done) return showToast('Сначала выполни условие поручения.');
+    player.worldProgress.hunterClaimed[id]=true;
+    giveWorldReward(c.reward); renderWorldModule('Охотник');
+    showToast(`Поручение выполнено! ${worldRewardText(c.reward)}`);
+}
+// ===== КОНЕЦ СИСТЕМ МИРА И ПРИКЛЮЧЕНИЙ =====
 
 // ================================================
 // НАЧАЛО ФУНКЦИИ: switchTab
@@ -4194,6 +5621,14 @@ function switchTab(tabName) {
 const mailboxView = document.getElementById('mailboxView');
     const cultivationView = document.getElementById('cultivationView');
 const dailyQuestView = document.getElementById('dailyQuestView');
+  // Экран колеса удачи
+const wheelView = document.getElementById('wheelView');
+  // Экран коллекции героев
+const heroCollectionView = document.getElementById('heroCollectionView');
+const skillsView = document.getElementById('skillsView');
+const classesView = document.getElementById('classesView');
+const mannequinView = document.getElementById('mannequinView');
+const worldModulesView = document.getElementById('worldModulesView');
   
     if (invView) invView.style.display = tabName === 'inventory' ? 'flex' : 'none';
     if (shopView) shopView.style.display = tabName === 'shop' ? 'flex' : 'none';
@@ -4204,6 +5639,17 @@ const dailyQuestView = document.getElementById('dailyQuestView');
 if (mailboxView) mailboxView.style.display = tabName === 'mailbox' ? 'block' : 'none';
     if (cultivationView) cultivationView.style.display = tabName === 'cultivation' ? 'flex' : 'none';
 if (dailyQuestView) dailyQuestView.style.display = tabName === 'dailyQuest' ? 'flex' : 'none';
+  // Показываем колесо удачи
+if (wheelView) wheelView.style.display = tabName === 'wheel' ? 'flex' : 'none';
+  // Показываем коллекцию героев
+if (heroCollectionView) {
+    heroCollectionView.style.display =
+        tabName === 'heroCollection' ? 'flex' : 'none';
+            }
+    if (skillsView) skillsView.style.display = tabName === 'skills' ? 'block' : 'none';
+    if (classesView) classesView.style.display = tabName === 'classes' ? 'block' : 'none';
+    if (mannequinView) mannequinView.style.display = tabName === 'mannequin' ? 'block' : 'none';
+    if (worldModulesView) worldModulesView.style.display = tabName === 'worldModules' ? 'block' : 'none';
   if (tabName === 'dailyQuest') {
     ensureDailyQuest();
     renderDailyQuest();
@@ -4215,7 +5661,186 @@ if (dailyQuestView) dailyQuestView.style.display = tabName === 'dailyQuest' ? 'f
 
     // Обновление характеристик культивации
     if (tabName === 'cultivation') updateUI();
+
+    // Обновление колеса удачи при открытии
+    if (tabName === 'wheel') {
+        updateFortuneWheel();
+    }
+  // Обновление коллекции героев при открытии
+if (tabName === 'heroCollection') {
+    renderHeroCollection();
+  }
+    if (tabName === 'skills') renderSkills();
+    if (tabName === 'classes') renderClasses();
+    if (tabName === 'mannequin') renderMannequin();
 }
+
+// ================================================
+// КОНЕЦ ФУНКЦИИ: switchTab
+// ================================================
+      
+const fortuneWheelRewards = [
+    {
+        id: 'gold100',
+        name: '100 золота',
+        chance: 30,
+        type: 'coins',
+        amount: 100
+    },
+    {
+        id: 'exp50',
+        name: '50 опыта',
+        chance: 25,
+        type: 'exp',
+        amount: 50
+    },
+    {
+        id: 'shards5',
+        name: '5 осколков',
+        chance: 15,
+        type: 'shards',
+        amount: 5
+    },
+    {
+        id: 'commonChest',
+        name: 'Обычный сундук',
+        chance: 12,
+        type: 'chest'
+    },
+    {
+        id: 'gold150',
+        name: '150 золота',
+        chance: 8,
+        type: 'coins',
+        amount: 150
+    },
+    {
+        id: 'upgradeMaterial',
+        name: 'Материал улучшения',
+        chance: 5,
+        type: 'material'
+    },
+    {
+        id: 'rareItem',
+        name: 'Редкий предмет',
+        chance: 4,
+        type: 'rare'
+    },
+    {
+        id: 'commonHero',
+        name: 'Обычный герой',
+        chance: 1,
+        type: 'hero'
+    }
+];
+  // ===== ДАТА ДЛЯ ЕЖЕДНЕВНОГО ВРАЩЕНИЯ =====
+function getWheelLocalDate() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+
+    return year + '-' + month + '-' + day;
+}
+// ================================================
+// ПРОВЕРКА ЕЖЕДНЕВНОГО БЕСПЛАТНОГО ВРАЩЕНИЯ
+// ================================================
+
+function updateFortuneWheel() {
+    const status = document.getElementById('wheelDailyStatus');
+    const button = document.getElementById('wheelSpinButton');
+
+    if (!status || !button) return;
+
+    const today = getWheelLocalDate();
+  
+    const alreadySpun = player.wheelLastFreeSpin === today;
+
+    if (alreadySpun) {
+        status.textContent = '⏳ Бесплатное вращение уже использовано сегодня.';
+        button.textContent = '🎁 Бесплатное вращение недоступно';
+        button.disabled = true;
+    } else {
+        status.textContent = '🎁 Твоё бесплатное вращение доступно!';
+        button.textContent = '🎡 Крутить колесо бесплатно';
+        button.disabled = false;
+    }
+}
+// ================================================
+// СЛУЧАЙНЫЙ ВЫБОР НАГРАДЫ КОЛЕСА
+// ================================================
+
+function getFortuneWheelReward() {
+    const totalChance = fortuneWheelRewards.reduce(
+        (sum, reward) => sum + reward.chance,
+        0
+    );
+
+    let random = Math.random() * totalChance;
+
+    for (const reward of fortuneWheelRewards) {
+        random -= reward.chance;
+
+        if (random < 0) {
+            return reward;
+        }
+    }
+
+    return fortuneWheelRewards[0];
+}
+
+// ================================================
+// КОНЕЦ СЛУЧАЙНОГО ВЫБОРА НАГРАДЫ
+// ==============================================
+// ================================================
+// АНИМАЦИЯ ВРАЩЕНИЯ КОЛЕСА
+// ================================================
+
+function animateFortuneWheel(rewardIndex, callback) {
+    const wheel = document.getElementById('fortuneWheel');
+
+if (!wheel) {
+    if (typeof callback === 'function') {
+        callback();
+    }
+    return;
+}
+
+    const sectorAngle = 360 / fortuneWheelRewards.length;
+    const targetAngle = 360 - (rewardIndex * sectorAngle + sectorAngle / 2);
+
+    const fullRotations = 360 * 5;
+    const finalRotation = fullRotations + targetAngle;
+
+    wheel.style.transition = 'none';
+    wheel.style.transform = 'rotate(0deg)';
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            wheel.style.transition = 'transform 5s cubic-bezier(0.12, 0.75, 0.15, 1)';
+            wheel.style.transform = `rotate(${finalRotation}deg)`;
+        });
+    });
+
+    setTimeout(() => {
+        if (typeof callback === 'function') {
+            callback();
+        }
+    }, 5100);
+}
+
+// ================================================
+// КОНЕЦ АНИМАЦИИ КОЛЕСА
+// ================================================
+      // ================================================
+// КОНЕЦ ПРОВЕРКИ ЕЖЕДНЕВНОГО ВРАЩЕНИЯ
+// ================================================
+// ================================================
+// КОНЕЦ: НАГРАДЫ И ШАНСЫ КОЛЕСА УДАЧИ
+// ================================================
+      
+      
 // ================================================
 // КОНЕЦ ФУНКЦИИ: switchTab
 // ================================================
@@ -4583,62 +6208,69 @@ document.getElementById('detailSellBtn').addEventListener('click', function () {
         // КОНЕЦ ФУНКЦИИ: getGearSlot
 
         // НАЧАЛО ФУНКЦИИ: equipShopItem — надевает купленный предмет на персонажа
-
         function equipShopItem(index) {
-            const item = player.inventory[index]; if (!item) return;
-            if (!player.equippedGear) player.equippedGear = {};
+            const item = player.inventory[index];
+            if (!item) return;
+
+            ensureHeroEquipmentState();
+            if (!player.heroKey) {
+                showToast('Сначала выбери героя.');
+                return;
+            }
+
             const key = getGearSlot(item);
             const old = player.equippedGear[key];
-            const mult = (Number(player.rebirthCount) || 0) + 1;
-            if (old) { player.power -= (Number(old.power) || 0) * mult; player.inventory.push(old); }
+
+            if (old) {
+                player.inventory.push(old);
+            }
+
             player.equippedGear[key] = item;
-          addDailyQuestProgress('equip', 1);
-            player.power += (Number(item.power) || 0) * mult;
+            player.heroEquipment[player.heroKey] = {
+                ...player.equippedGear
+            };
+
+            addDailyQuestProgress('equip', 1);
             player.inventory.splice(index, 1);
+
+            recalculatePlayerPower();
             log('🛡️ Надет предмет: ' + item.name);
-            saveGame(); updateUI(); renderInventory();
+            saveGame();
+            updateUI();
+            renderInventory();
             showToast('Надето: ' + item.name);
         }
         // КОНЕЦ ФУНКЦИИ: equipShopItem
 
         // НАЧАЛО ФУНКЦИИ: unequipGear — снимает предмет с ячейки экипировки
-
         function unequipGear(key) {
             if (!player.equippedGear || !player.equippedGear[key]) return;
+
             const item = player.equippedGear[key];
-            const mult = (Number(player.rebirthCount) || 0) + 1;
-            player.power = Math.max(0, player.power - (Number(item.power) || 0) * mult);
             player.inventory.push(item);
             delete player.equippedGear[key];
-            saveGame(); updateUI(); renderInventory();
+
+            if (!player.heroEquipment) player.heroEquipment = {};
+            if (player.heroKey) {
+                player.heroEquipment[player.heroKey] = {
+                    ...player.equippedGear
+                };
+            }
+
+            recalculatePlayerPower();
+            saveGame();
+            updateUI();
+            renderInventory();
             showToast('Снято: ' + item.name + '. Предмет вернулся в рюкзак.');
         }
         // КОНЕЦ ФУНКЦИИ: unequipGear
 
-        // НАЧАЛО ФУНКЦИИ: addTestItem — добавляет тестовый предмет для проверки
-
-        function addTestItem() {
-            if (!Array.isArray(player.inventory)) player.inventory = [];
-            player.inventory.push({
-                name: 'Кость Духа (Тест)',
-                type: 'bone',
-                power: 50,
-                icon: '🦴',
-                image: 'items/spirit-bone.png'
-            });
-            saveGame();
-            renderInventory();
-            showToast('Тестовый предмет добавлен.');
-        }
-        // КОНЕЦ ФУНКЦИИ: addTestItem
-
-        // НАЧАЛО ФУНКЦИИ: useItem — использует предмет из инвентаря
-
+// НАЧАЛО ФУНКЦИИ: useItem — использует предмет из инвентаря
         function useItem(index) {
             const item = player.inventory[index];
             if (!item) return;
             if (item.type === 'bone' || String(item.name || '').includes('Кость Духа')) {
-                player.power += Number(item.power) || 10;
+                addPowerBonus(Number(item.power) || 10);
                 showToast('Поглощено: ' + (item.name || 'предмет') + '. Сила увеличена.');
             } else {
                 showToast('Использован предмет: ' + (item.name || 'предмет'));
@@ -4655,19 +6287,27 @@ document.getElementById('detailSellBtn').addEventListener('click', function () {
         function equipItem(index) {
             const item = player.inventory[index];
             if (!item) return;
-            if (!player.equipped) player.equipped = { bone: null, weapon: null };
+
+            if (!player.equipped) {
+                player.equipped = { bone: null, weapon: null };
+            }
+
             player.maxExp = Math.max(100, Number(player.maxExp) || 100);
             player.maxEnergy = Math.max(1, Number(player.maxEnergy) || 100);
-            player.energy = Math.min(Math.max(0, Number(player.energy) || 0), player.maxEnergy);
-            const mult = (Number(player.rebirthCount) || 0) + 1;
+            player.energy = Math.min(
+                Math.max(0, Number(player.energy) || 0),
+                player.maxEnergy
+            );
+
             if (player.equipped.bone) {
-                player.power -= (Number(player.equipped.bone.power) || 0) * mult;
                 player.inventory.push(player.equipped.bone);
             }
+
             player.equipped.bone = item;
-          addDailyQuestProgress('equip', 1);
-            player.power += (Number(item.power) || 0) * mult;
+            addDailyQuestProgress('equip', 1);
             player.inventory.splice(index, 1);
+
+            recalculatePlayerPower();
             log('🦴 Экипирован артефакт: ' + (item.name || 'Артефакт'));
             saveGame();
             updateUI();
@@ -4696,10 +6336,19 @@ document.getElementById('detailSellBtn').addEventListener('click', function () {
                 player.level = 1;
                 player.exp = 0;
                 player.maxExp = 100;
-                player.power = 120 * (player.rebirthCount + 1);
                 player.inventory = [];
                 player.equipped = { bone: null, weapon: null };
                 player.equippedGear = {};
+                if (!player.heroEquipment) player.heroEquipment = {};
+                if (player.heroKey) {
+                    player.heroEquipment[player.heroKey] = {};
+                }
+                // После перерождения сохраняется новый общий стартовый запас силы.
+                player.powerBonus = Math.max(
+                    0,
+                    120 * (player.rebirthCount + 1) - getHeroBasePower()
+                );
+                recalculatePlayerPower();
                 log(`🌀 ВРАТА ПЕРЕРОЖДЕНИЯ АКТИВИРОВАНЫ!`);
                 saveGame();
                 updateUI();
@@ -5041,13 +6690,12 @@ if (avatar) {
         // КОНЕЦ ФУНКЦИИ: claimBonus
 
         // НАЧАЛО ФУНКЦИИ: checkLevelUp — проверяет повышение уровня и применяет бонусы
-
         function checkLevelUp() {
             while (player.exp >= player.maxExp && player.level < 99) {
                 player.exp -= player.maxExp;
                 player.level += 1;
               addDailyQuestProgress('levelUp', 1);
-                player.power += (35 * (player.rebirthCount + 1));
+                addPowerBonus(35 * (player.rebirthCount + 1));
                 player.maxEnergy += 10;
                 player.energy = player.maxEnergy;
                 player.maxExp = Math.floor(player.maxExp * 1.35);
@@ -5210,6 +6858,11 @@ const localMailbox = Array.isArray(player.mailbox)
 // Загружаем облачное сохранение
 player = Object.assign({}, player, cloudData);
 
+// Облачные старые сохранения тоже переводим на личные комплекты.
+if (!Object.prototype.hasOwnProperty.call(cloudData, 'powerBonus')) {
+    delete player.powerBonus;
+}
+
 // Объединяем локальную и облачную почту
 const cloudMailbox = Array.isArray(player.mailbox)
     ? player.mailbox
@@ -5239,7 +6892,8 @@ player.mailbox = Array.from(mergedMailbox.values())
           
             if (!Array.isArray(player.inventory)) player.inventory = [];
             if (!player.equipped) player.equipped = { bone: null, weapon: null };
-            if (!player.equippedGear) player.equippedGear = {};
+            ensureHeroEquipmentState();
+            initializePowerBonusFromLegacy();
             if (!player.dailyTasks) {
                 player.dailyTasks = {
                     date: '',
