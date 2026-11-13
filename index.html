@@ -2382,6 +2382,178 @@ button.sys-btn,
     }
 }
       
+
+
+/* ===== ЧАСЫ И ОБНОВЛЁННАЯ ГЛАВНАЯ СТРАНИЦА ===== */
+.game-clock-panel {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 10px 0 13px;
+    padding: 12px 15px;
+    border: 1px solid rgba(126, 117, 179, .35);
+    border-radius: 17px;
+    text-align: center;
+    background: linear-gradient(120deg, rgba(255,250,235,.97), rgba(235,230,255,.97), rgba(225,245,255,.97));
+    box-shadow: 0 6px 17px rgba(73,87,139,.13), inset 0 1px white;
+}
+.game-clock-top { display:flex; justify-content:space-between; align-items:center; color:#69749a; font-size:9px; font-weight:900; letter-spacing:1.5px; }
+.game-clock-live { color:#239b73; font-size:9px; }
+.game-clock-time { margin-top:4px; color:#46558c; font-size:30px; font-weight:900; letter-spacing:3px; font-variant-numeric:tabular-nums; text-shadow:0 2px 8px rgba(100,120,190,.15); }
+.game-clock-date { margin-top:3px; color:#586987; font-size:12px; font-weight:800; text-transform:capitalize; }
+.game-clock-zone { margin-top:7px; color:#8a78ad; font-size:9px; font-weight:700; }
+
+/* Быстрая навигация — компактная сетка 2 на 2 */
+.quick-nav {
+    display:grid !important;
+    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+    gap:9px !important;
+}
+.quick-nav button {
+    min-width:0 !important;
+    min-height:58px !important;
+    padding:10px 5px !important;
+    border-radius:14px !important;
+    font-size:12px !important;
+    font-weight:800 !important;
+    border:1px solid rgba(126,117,179,.34) !important;
+    background:linear-gradient(145deg, rgba(255,255,255,.99), rgba(226,235,255,.96)) !important;
+    color:#40577e !important;
+    box-shadow:0 4px 11px rgba(73,87,139,.13), inset 0 1px white !important;
+}
+.actions-box {
+    display:grid !important;
+    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+    gap:10px !important;
+    padding:13px !important;
+}
+.actions-box .section-header { grid-column:1 / -1 !important; margin:5px 2px 1px !important; text-align:left; }
+.actions-box .btn-gate { grid-column:1 / -1 !important; min-height:55px !important; }
+.actions-box .sys-btn { width:100% !important; min-width:0 !important; min-height:52px !important; padding:9px 6px !important; border-radius:13px !important; font-size:11px !important; line-height:1.35 !important; }
+
+@media (max-width:360px) {
+    .game-clock-time { font-size:27px; }
+    .quick-nav { gap:7px !important; }
+    .quick-nav button { font-size:11px !important; }
+    .actions-box { gap:7px !important; padding:9px !important; }
+}
+
+
+
+/* ===== ФИНАЛЬНАЯ КОМПОНОВКА ГЛАВНОЙ СТРАНИЦЫ ===== */
+.game-clock-panel{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;align-items:center!important;column-gap:10px!important;row-gap:3px!important;margin:6px 0 9px!important;padding:7px 10px!important;min-height:0!important;border-radius:12px!important;text-align:left!important;box-shadow:0 3px 10px rgba(73,87,139,.10),inset 0 1px white!important}
+.game-clock-top{grid-column:1/-1!important;display:flex!important;justify-content:space-between!important;align-items:center!important;font-size:8px!important;letter-spacing:1px!important}
+.game-clock-time{margin:0!important;font-size:21px!important;line-height:1.1!important;letter-spacing:1px!important;white-space:nowrap!important}
+.game-clock-date{margin:0!important;font-size:10px!important;line-height:1.2!important;text-align:center!important}
+.game-clock-zone{margin:0!important;font-size:8px!important;line-height:1.2!important;text-align:right!important;white-space:nowrap!important}
+.quick-nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin:8px 0 9px!important}
+.quick-nav button{min-width:0!important;min-height:43px!important;padding:7px 5px!important;border-radius:11px!important;font-size:11px!important;line-height:1.2!important}
+.system-menu-launch{width:100%!important;min-height:42px!important;margin:0 0 9px!important;padding:9px 8px!important;border-radius:11px!important;font-size:10px!important;letter-spacing:.5px!important}
+.stats-panel{margin:0 0 9px!important;padding:10px 11px!important;border-radius:13px!important}
+.stats-panel .stat-line{font-size:11px!important;line-height:1.35!important}
+.stats-panel .progress-bar-bg{height:7px!important;margin:4px 0 7px!important}
+.stats-panel .grid-stats{gap:6px 10px!important;margin-top:8px!important}
+.stats-panel .grid-stats .stat-line{min-width:0!important;font-size:10px!important}
+.actions-box{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin:0 0 9px!important;padding:10px!important;border-radius:13px!important}
+.actions-box .section-header{grid-column:1/-1!important;margin:3px 1px 0!important;padding:0 0 5px!important;font-size:10px!important;letter-spacing:.8px!important}
+.actions-box .btn-gate{grid-column:1/-1!important;min-height:45px!important}
+.actions-box .sys-btn{width:100%!important;min-width:0!important;min-height:47px!important;padding:7px 6px!important;border-radius:11px!important;font-size:10px!important;line-height:1.25!important;overflow-wrap:anywhere!important}
+.actions-box .sys-btn small{display:block!important;margin-top:3px!important;font-size:9px!important}
+.actions-box .btn-rebirth{grid-column:1/-1!important}
+.log-terminal{margin:0 0 8px!important;padding:9px 10px!important;border-radius:11px!important;font-size:9px!important;line-height:1.4!important}
+.container>button[onclick="resetGame()"]{width:100%!important;min-height:38px!important;margin:0 0 12px!important;border-radius:10px!important;font-size:10px!important}
+@media(max-width:360px){.game-clock-panel{column-gap:6px!important;padding:7px 8px!important}.game-clock-time{font-size:19px!important}.game-clock-date{font-size:9px!important}.game-clock-zone{font-size:7px!important}.quick-nav button{min-height:41px!important;font-size:10px!important}.actions-box{gap:6px!important;padding:8px!important}.actions-box .sys-btn{font-size:9px!important}}
+
+
+
+/* ===== ПРАВКА ГЛАВНОЙ: ВЕРНУТЬ 4 БЫСТРЫЕ КНОПКИ И УПОРЯДОЧИТЬ ДЕЙСТВИЯ ===== */
+
+/* Арена / База / Сумка / Магазин — прежний ряд из четырёх кнопок */
+.quick-nav {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    margin: 8px 0 10px !important;
+}
+.quick-nav button {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 54px !important;
+    padding: 7px 3px !important;
+    border: 1px solid rgba(148,163,184,.36) !important;
+    border-radius: 11px !important;
+    color: #d5e7f7 !important;
+    background: linear-gradient(155deg, rgba(35,43,59,.95), rgba(8,14,26,.98)) !important;
+    box-shadow: inset 0 1px rgba(255,255,255,.07), 0 4px 10px rgba(0,0,0,.25) !important;
+    font-size: 10px !important;
+    line-height: 1.15 !important;
+    white-space: normal !important;
+}
+
+/* Разделы действий: заголовки на всю ширину, кнопки ровные */
+.actions-box {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    gap: 9px !important;
+    padding: 11px !important;
+}
+.actions-box > .section-header {
+    grid-column: 1 / -1 !important;
+    margin: 4px 1px 0 !important;
+    padding: 0 0 6px !important;
+    border-bottom: 1px solid rgba(148,163,184,.18) !important;
+    font-size: 10px !important;
+    letter-spacing: 1.2px !important;
+}
+.actions-box > .btn-gate,
+.actions-box > .btn-meditate,
+.actions-box > .btn-rebirth {
+    grid-column: 1 / -1 !important;
+}
+.actions-box > .sys-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 49px !important;
+    box-sizing: border-box !important;
+    padding: 8px 7px !important;
+    border-radius: 11px !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+}
+.actions-box > .btn-gate {
+    min-height: 48px !important;
+    font-size: 12px !important;
+}
+.actions-box > .btn-meditate {
+    min-height: 48px !important;
+}
+.actions-box > .btn-evolve,
+.actions-box > button[onclick="claimBonus()"] {
+    min-height: 58px !important;
+}
+.actions-box > .sys-btn small {
+    display: block !important;
+    margin-top: 3px !important;
+    font-size: 9px !important;
+    line-height: 1.2 !important;
+}
+.actions-box > .btn-rebirth {
+    min-height: 45px !important;
+}
+
+@media (max-width: 360px) {
+    .quick-nav { gap: 5px !important; }
+    .quick-nav button {
+        min-height: 49px !important;
+        padding: 6px 1px !important;
+        font-size: 9px !important;
+    }
+    .actions-box { gap: 7px !important; padding: 9px !important; }
+    .actions-box > .sys-btn { font-size: 10px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -2628,7 +2800,7 @@ button.sys-btn,
         display: none; 
         position: fixed; 
         top: 0; left: 0; 
-        width: 100%; height: 100%; 
+        width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; 
         background: linear-gradient(rgba(10, 5, 15, 0.25), rgba(10, 5, 15, 0.25)), url('images/Fon.png') center center / cover no-repeat;backdrop-filter: blur(3px);
         z-index: 1000; 
         flex-direction: column; 
@@ -2820,6 +2992,18 @@ button.sys-btn,
             <!-- КОНЕЦ БЛОКА: счётчик игроков онлайн -->
         </div>
 
+        <!-- ===== ИГРОВЫЕ ЧАСЫ: ВРЕМЯ ГЕРМАНИИ ===== -->
+        <div class="game-clock-panel">
+            <div class="game-clock-top">
+                <span>🌍 ИГРОВОЕ ВРЕМЯ</span>
+                <span class="game-clock-live">● LIVE</span>
+            </div>
+            <div id="gameClockTime" class="game-clock-time">00:00:00</div>
+            <div id="gameClockDate" class="game-clock-date">Загрузка даты...</div>
+            <div class="game-clock-zone">🇩🇪 Германия · <span id="gameClockZone">Europe/Berlin</span></div>
+        </div>
+        <!-- ===== КОНЕЦ ИГРОВЫХ ЧАСОВ ===== -->
+
         <!-- Шапка с динамическими Кольцами -->
         <div class="sys-header">
             <div class="avatar-wrapper">
@@ -2932,7 +3116,12 @@ button.sys-btn,
       <div class="shop-content">
         <div class="shop-header">
           <h2>Магазин Снаряжения</h2>
-          <div class="currency-display">Монеты: <span id="user-coins">1000</span> 🪙</div>
+          <div class="currency-display">
+    Монеты: <span id="user-coins">1000</span> 🪙
+    <span style="margin-left:12px;">
+        Кристаллы: <span id="user-gems">0</span> 💎
+    </span>
+          </div>
           <button onclick="closeShopModal()" class="sys-btn" style="padding:6px 10px; width:auto;">← Назад</button>
         </div>
         
@@ -3323,6 +3512,7 @@ wheelSpinning: false,
       
             currentEpoch: 1,
             coins: 1000,
+      gems: 0, // Премиальная валюта — кристаллы
             skillLevels: { power: 0, focus: 0, control: 0 },
             classKey: 'warrior',
             worldProgress: { farmRuns: 0, portRuns: 0, towerFloor: 0, hunterDate: '', hunterClaimed: {} },
@@ -4010,15 +4200,21 @@ if (player.mailbox.length === 0) {
             rewardText.push('⭐ ' + Number(rewards.exp) + ' опыта');
 
         if (Number(rewards.shards) > 0)
-            rewardText.push('💎 ' + Number(rewards.shards));
+            rewardText.push('🔹 ' + Number(rewards.shards) + ' осколков духа');
+
+        if (Number(rewards.gems) > 0)
+            rewardText.push('💎 ' + Number(rewards.gems) + ' кристаллов');
 
         const safeTitle = escapeMailText(mail.title || 'Системное письмо');
         const safeMessage = escapeMailText(mail.message || '');
+        const mailDate = mail.createdAt
+            ? new Date(mail.createdAt).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' })
+            : '';
 
         return `
             <div class="daily-summary" style="margin-bottom:12px; padding:15px;">
                 <h3>✉️ ${safeTitle}</h3>
-
+                ${mailDate ? `<small style="opacity:.7;">${mailDate}</small>` : ''}
                 <p>${safeMessage}</p>
 
                 ${rewardText.length
@@ -4072,9 +4268,10 @@ function claimMailReward(index) {
     const coins = Math.max(0, Number(rewards.coins) || 0);
     const exp = Math.max(0, Number(rewards.exp) || 0);
     const shards = Math.max(0, Number(rewards.shards) || 0);
+    const gems = Math.max(0, Math.floor(Number(rewards.gems) || 0));
 
     // Не позволяем получить пустую награду
-    if (coins + exp + shards <= 0) {
+    if (coins + exp + shards + gems <= 0) {
         return;
     }
 
@@ -4085,6 +4282,7 @@ function claimMailReward(index) {
     player.coins = (Number(player.coins) || 0) + coins;
     player.exp = (Number(player.exp) || 0) + exp;
     player.shards = (Number(player.shards) || 0) + shards;
+    player.gems = (Number(player.gems) || 0) + gems;
 
     // Проверяем повышение уровня
     if (exp > 0 && typeof checkLevelUp === 'function') {
@@ -4106,6 +4304,7 @@ function claimAllMailRewards() {
     let totalCoins = 0;
     let totalExp = 0;
     let totalShards = 0;
+    let totalGems = 0;
     let claimedCount = 0;
 
     player.mailbox.forEach(mail => {
@@ -4116,12 +4315,14 @@ function claimAllMailRewards() {
         const coins = Math.max(0, Number(rewards.coins) || 0);
         const exp = Math.max(0, Number(rewards.exp) || 0);
         const shards = Math.max(0, Number(rewards.shards) || 0);
+        const gems = Math.max(0, Math.floor(Number(rewards.gems) || 0));
 
-        if (coins + exp + shards <= 0) return;
+        if (coins + exp + shards + gems <= 0) return;
 
         totalCoins += coins;
         totalExp += exp;
         totalShards += shards;
+        totalGems += gems;
 
         mail.claimed = true;
         claimedCount++;
@@ -4135,6 +4336,7 @@ function claimAllMailRewards() {
     player.coins = (Number(player.coins) || 0) + totalCoins;
     player.exp = (Number(player.exp) || 0) + totalExp;
     player.shards = (Number(player.shards) || 0) + totalShards;
+    player.gems = (Number(player.gems) || 0) + totalGems;
 
     if (totalExp > 0 && typeof checkLevelUp === 'function') {
         checkLevelUp();
@@ -4160,7 +4362,8 @@ function deleteMail(index) {
     const hasReward =
         (Number(rewards.coins) || 0) > 0 ||
         (Number(rewards.exp) || 0) > 0 ||
-        (Number(rewards.shards) || 0) > 0;
+        (Number(rewards.shards) || 0) > 0 ||
+        (Number(rewards.gems) || 0) > 0;
 
     if (hasReward && !mail.claimed) {
         log('Сначала заберите награду из этого письма!');
@@ -4191,11 +4394,13 @@ function addMail(data = {}) {
         rewards: {
             coins: Math.max(0, Number(data.rewards?.coins) || 0),
             exp: Math.max(0, Number(data.rewards?.exp) || 0),
-            shards: Math.max(0, Number(data.rewards?.shards) || 0)
+            shards: Math.max(0, Number(data.rewards?.shards) || 0),
+            gems: Math.max(0, Math.floor(Number(data.rewards?.gems) || 0))
         },
         createdAt: Date.now(),
         read: false,
-        claimed: false
+        // Для автоматических наград письмо сразу помечается полученным.
+        claimed: data.claimed === true
     };
 
     player.mailbox.unshift(mail);
@@ -4231,8 +4436,12 @@ function addMail(data = {}) {
 
         function openSystemModule(moduleName) {
             if (moduleName === 'Дела дня') return openDailyTasks();
-          if (moduleName === 'Колесо') return switchTab('wheel');
-            if (moduleName === 'Арена') { switchTab('main'); openModal('arenaModal'); return; }
+          if (moduleName === 'Колесо') {
+    switchTab('wheel');
+    updateFortuneWheel();
+    return;
+              }
+          if (moduleName === 'Арена') { switchTab('main'); openModal('arenaModal'); return; }
             if (moduleName === 'Гильдия') { switchTab('main'); openModal('guildModal'); return; }
             if (moduleName === 'Сумка') return switchTab('inventory');
             if (moduleName === 'Навыки') return switchTab('skills');
@@ -4293,6 +4502,31 @@ function addMail(data = {}) {
                         player.equipped = { bone: null, weapon: null };
                     }
                     if (player.coins === undefined) player.coins = 1000;
+                  // Проверка баланса кристаллов для старых и новых сохранений
+player.gems = Math.max(0, Math.floor(Number(player.gems) || 0));
+
+                    // Однократное исправление старых писем за уровень:
+                    // прежняя версия ошибочно сохраняла кристаллы в rewards.shards.
+                    // Переносим указанную сумму в gems и помечаем письмо, чтобы не повторять перенос.
+                    let migratedLegacyGems = false;
+                    player.mailbox.forEach(mail => {
+                        if (
+                            mail &&
+                            mail.type === 'level_reward' &&
+                            mail.claimed === true &&
+                            mail.gemsMigrated !== true &&
+                            mail.rewards &&
+                            Number(mail.rewards.shards) > 0
+                        ) {
+                            const oldCrystalAmount = Math.max(0, Math.floor(Number(mail.rewards.shards) || 0));
+                            player.gems += oldCrystalAmount;
+                            mail.rewards.gems = (Number(mail.rewards.gems) || 0) + oldCrystalAmount;
+                            mail.rewards.shards = 0;
+                            mail.gemsMigrated = true;
+                            migratedLegacyGems = true;
+                        }
+                    });
+                    if (migratedLegacyGems) saveGame();
 
                     player.maxExp = Math.max(100, Number(player.maxExp) || 100);
                     player.maxEnergy = Math.max(1, Number(player.maxEnergy) || 100);
@@ -4893,6 +5127,11 @@ function giveFortuneReward(reward) {
             resultText = '💎 Получено ' + reward.amount + ' осколков!';
             break;
 
+        case 'gems':
+    player.gems = (Number(player.gems) || 0) + reward.amount;
+    resultText = '💎 Получено ' + reward.amount + ' кристаллов!';
+    break;
+
         case 'chest':
             addFortuneItem(fortuneSpecialItems.commonChest);
             resultText = '🎁 Получен обычный сундук!';
@@ -4952,22 +5191,44 @@ function giveFortuneReward(reward) {
       // ================================================
 // ВРАЩЕНИЕ КОЛЕСА УДАЧИ
 // ================================================
-
+// Стоимость дополнительного прокрута рулетки
+const FORTUNE_WHEEL_GEM_COST = 10;
+      
 function spinFortuneWheel() {
 
     if (player.wheelSpinning) return;
 
     const today = getWheelLocalDate();
 
-    // Проверяем бесплатное вращение
-    if (player.wheelLastFreeSpin === today) {
-        updateFortuneWheel();
-        return;
+    // Проверяем, доступен ли бесплатный прокрут
+    const isFreeSpin = player.wheelLastFreeSpin !== today;
+
+    // Проверяем баланс для платного прокрута
+    if (!isFreeSpin) {
+        player.gems = Math.max(0, Number(player.gems) || 0);
+
+        if (player.gems < FORTUNE_WHEEL_GEM_COST) {
+            const result = document.getElementById('wheelResult');
+
+            if (result) {
+                result.textContent =
+                    '💎 Недостаточно кристаллов! Нужно ' +
+                    FORTUNE_WHEEL_GEM_COST + ' кристаллов.';
+            }
+
+            updateFortuneWheel();
+            return;
+        }
+
+        // Списываем кристаллы
+        player.gems -= FORTUNE_WHEEL_GEM_COST;
+    } else {
+        // Отмечаем использованный бесплатный прокрут
+        player.wheelLastFreeSpin = today;
     }
 
     // Блокируем повторное нажатие
     player.wheelSpinning = true;
-    player.wheelLastFreeSpin = today;
 
     const button = document.getElementById('wheelSpinButton');
     const result = document.getElementById('wheelResult');
@@ -4982,12 +5243,13 @@ function spinFortuneWheel() {
     }
 
     saveGame();
+    updateUI();
 
     // Выбираем награду
     const reward = getFortuneWheelReward();
     const rewardIndex = fortuneWheelRewards.indexOf(reward);
 
-    // Сразу сохраняем награду
+    // Выдаём награду
     const rewardText = giveFortuneReward(reward);
 
     if (result) {
@@ -5004,9 +5266,10 @@ function spinFortuneWheel() {
         player.wheelSpinning = false;
 
         saveGame();
+        updateUI();
         updateFortuneWheel();
     });
-}
+      }
 
 // ================================================
 // КОНЕЦ ВРАЩЕНИЯ КОЛЕСА
@@ -5708,12 +5971,12 @@ const fortuneWheelRewards = [
         type: 'chest'
     },
     {
-        id: 'gold150',
-        name: '150 золота',
-        chance: 8,
-        type: 'coins',
-        amount: 150
-    },
+    id: 'crystals5',
+    name: '5 кристаллов',
+    chance: 8,
+    type: 'gems',
+    amount: 5
+},
     {
         id: 'upgradeMaterial',
         name: 'Материал улучшения',
@@ -5743,6 +6006,7 @@ function getWheelLocalDate() {
 
     return year + '-' + month + '-' + day;
 }
+      
 // ================================================
 // ПРОВЕРКА ЕЖЕДНЕВНОГО БЕСПЛАТНОГО ВРАЩЕНИЯ
 // ================================================
@@ -5754,19 +6018,44 @@ function updateFortuneWheel() {
     if (!status || !button) return;
 
     const today = getWheelLocalDate();
-  
     const alreadySpun = player.wheelLastFreeSpin === today;
+    const gems = Math.max(0, Number(player.gems) || 0);
+    const cost = FORTUNE_WHEEL_GEM_COST;
 
-    if (alreadySpun) {
-        status.textContent = '⏳ Бесплатное вращение уже использовано сегодня.';
-        button.textContent = '🎁 Бесплатное вращение недоступно';
+    // Если колесо сейчас вращается
+    if (player.wheelSpinning) {
+        status.textContent = '✨ Колесо удачи вращается...';
+        button.textContent = '🎡 Колесо вращается...';
         button.disabled = true;
-    } else {
+        return;
+    }
+
+    // Бесплатное вращение ещё доступно
+    if (!alreadySpun) {
         status.textContent = '🎁 Твоё бесплатное вращение доступно!';
         button.textContent = '🎡 Крутить колесо бесплатно';
         button.disabled = false;
+        return;
+    }
+
+    // Бесплатное вращение уже использовано
+    if (gems >= cost) {
+        status.textContent =
+            '💎 Дополнительный прокрут стоит ' + cost +
+            ' кристаллов. У тебя: ' + gems + ' 💎';
+
+        button.textContent = '🎡 Крутить за ' + cost + ' 💎';
+        button.disabled = false;
+    } else {
+        status.textContent =
+            '💎 Недостаточно кристаллов! Нужно ' +
+            cost + ', у тебя: ' + gems + '.';
+
+        button.textContent = '💎 Нужно ' + cost + ' кристаллов';
+        button.disabled = true;
     }
 }
+      
 // ================================================
 // СЛУЧАЙНЫЙ ВЫБОР НАГРАДЫ КОЛЕСА
 // ================================================
@@ -6475,6 +6764,7 @@ function getHeroImagePosition(h) {
             let rebirthBtn = document.getElementById('rebirthBtn');
             let rebirthCountText = document.getElementById('rebirthCountText');
             let coinsDisplay = document.getElementById('user-coins');
+          let gemsDisplay = document.getElementById('user-gems');
 
             if (expEl) expEl.innerText = `${player.exp} / ${player.maxExp}`;
             if (expBar) expBar.style.width = Math.min((player.exp / player.maxExp) * 100, 100) + '%';
@@ -6573,7 +6863,8 @@ if (cultExpBar) {
             if (boneEl) boneEl.innerText = player.equipped.bone ? player.equipped.bone.name : 'Нет';
             if (rebirthCountText) rebirthCountText.innerText = player.rebirthCount;
             if (coinsDisplay) coinsDisplay.innerText = player.coins !== undefined ? player.coins : 1000;
-            
+            if (gemsDisplay) gemsDisplay.innerText = player.gems || 0;
+          
             if (nameHeader) nameHeader.innerText = player.heroName || "Охотник";
             if (abilityText) abilityText.innerText = player.abilityDesc || "Система активна";
             
@@ -6691,15 +6982,66 @@ if (avatar) {
 
         // НАЧАЛО ФУНКЦИИ: checkLevelUp — проверяет повышение уровня и применяет бонусы
         function checkLevelUp() {
+            let gainedLevels = 0;
+
             while (player.exp >= player.maxExp && player.level < 99) {
                 player.exp -= player.maxExp;
                 player.level += 1;
-              addDailyQuestProgress('levelUp', 1);
+                gainedLevels++;
+
+                addDailyQuestProgress('levelUp', 1);
                 addPowerBonus(35 * (player.rebirthCount + 1));
                 player.maxEnergy += 10;
                 player.energy = player.maxEnergy;
+
+                // Сначала рассчитываем награду за конкретный новый уровень.
+                const reachedLevel = player.level;
+                let levelCoins = Math.round((100 + reachedLevel * 15) / 50) * 50;
+                let levelGems = 0;
+                let bonusMessage = [];
+
+                // Каждые 5 уровней — премиальные кристаллы на баланс аккаунта.
+                if (reachedLevel % 5 === 0) {
+                    levelGems += 10 + Math.floor(reachedLevel / 5) * 2;
+                    bonusMessage.push('бонус за каждые 5 уровней');
+                }
+
+                // Особые рубежи дают дополнительные ресурсы.
+                if (reachedLevel % 50 === 0) {
+                    levelCoins += 500;
+                    levelGems += 50;
+                    bonusMessage.push('особая награда за 50 уровней');
+                } else if (reachedLevel % 25 === 0) {
+                    levelCoins += 250;
+                    levelGems += 25;
+                    bonusMessage.push('награда за 25 уровней');
+                } else if (reachedLevel % 10 === 0) {
+                    levelCoins += 100;
+                    bonusMessage.push('бонус за 10 уровней');
+                }
+
+                // Начисляем ресурсы немедленно — забирать письмо не требуется.
+                player.coins = (Number(player.coins) || 0) + levelCoins;
+                player.gems = (Number(player.gems) || 0) + levelGems;
+
+                // Письмо сохраняет историю, но его награда уже получена.
+                if (typeof addMail === 'function') {
+                    addMail({
+                        type: 'level_reward',
+                        title: `Награда за достижение ${reachedLevel} уровня`,
+                        message: `Поздравляем! Вы достигли ${reachedLevel} уровня. Награда автоматически начислена на ваш счёт.${bonusMessage.length ? ' Дополнительно: ' + bonusMessage.join(', ') + '.' : ''}`,
+                        rewards: { coins: levelCoins, gems: levelGems },
+                        claimed: true
+                    });
+                }
+
                 player.maxExp = Math.floor(player.maxExp * 1.35);
-                log(`🎉 Новый уровень! Достигнут ${player.level} уровень.`);
+                log(`🎉 Новый уровень ${reachedLevel}! Автоматическая награда: +${levelCoins} золота${levelGems ? ` и +${levelGems} кристаллов` : ''}.`);
+            }
+
+            if (gainedLevels > 0) {
+                saveGame();
+                updateMailBadge();
             }
         }
         // КОНЕЦ ФУНКЦИИ: checkLevelUp
@@ -7208,5 +7550,40 @@ checkAuthSession();
     <!-- КОНЕЦ БЛОКА ПОДКЛЮЧЕНИЯ SUPABASE -->
 
 <!-- КОНЕЦ ИГРОВОЙ СТРАНИЦЫ -->
+
+<script>
+// ===== ОБНОВЛЕНИЕ ИГРОВЫХ ЧАСОВ ПО ВРЕМЕНИ ГЕРМАНИИ =====
+(function startGameClock() {
+    function updateGameClock() {
+        const now = new Date();
+        const timeElement = document.getElementById('gameClockTime');
+        const dateElement = document.getElementById('gameClockDate');
+        const zoneElement = document.getElementById('gameClockZone');
+        if (!timeElement || !dateElement) return;
+
+        timeElement.textContent = new Intl.DateTimeFormat('ru-RU', {
+            timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit',
+            second: '2-digit', hourCycle: 'h23'
+        }).format(now);
+
+        dateElement.textContent = new Intl.DateTimeFormat('ru-RU', {
+            timeZone: 'Europe/Berlin', weekday: 'long', day: 'numeric',
+            month: 'long', year: 'numeric'
+        }).format(now);
+
+        if (zoneElement) {
+            const parts = new Intl.DateTimeFormat('ru-RU', {
+                timeZone: 'Europe/Berlin', timeZoneName: 'short'
+            }).formatToParts(now);
+            const zone = parts.find(part => part.type === 'timeZoneName');
+            zoneElement.textContent = zone ? zone.value : 'Europe/Berlin';
+        }
+    }
+    updateGameClock();
+    setInterval(updateGameClock, 1000);
+})();
+// ===== КОНЕЦ ОБНОВЛЕНИЯ ИГРОВЫХ ЧАСОВ =====
+</script>
+
 </body>
 </html>
